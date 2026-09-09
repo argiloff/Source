@@ -18,6 +18,9 @@ package-lock.json
 .idea/*
 *.iml
 projectFilesBackup
+.pandaos
+.agents
+.claude
 
 .DS_Store
 
