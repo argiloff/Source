@@ -1,0 +1,31 @@
+{{!--
+    "Top Konflikte" — conflicts ranked by report volume.
+
+    One nested {{#get}} per conflict resolves that conflict's current severity from
+    the internal tag on its most recent report. This is the single place the theme
+    reads conflict status, and it costs one query per listed conflict.
+--}}
+{{#if @custom.commentarii_conflicts}}
+    {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" include="count.posts" order="count.posts desc" limit="5" as |conflicts|}}
+        {{#if conflicts}}
+            <section class="cm-panel">
+                <h2 class="cm-panel-title">Top Konflikte</h2>
+                <ol class="cm-rank-list">
+                    {{#foreach conflicts}}
+                        <li class="cm-rank-item">
+                            <span class="cm-rank-number" aria-hidden="true">{{@number}}</span>
+                            <a class="cm-rank-link" href="{{> "commentarii-mundi/conflict-url"}}">
+                                <span class="cm-rank-name">{{name}}</span>
+                                <span class="cm-rank-count">{{count.posts}} {{#match count.posts 1}}Bericht{{else}}Berichte{{/match}}</span>
+                            </a>
+                            <span class="cm-dot-only">{{> "commentarii-mundi/conflict-severity" conflictSlug=slug}}</span>
+                        </li>
+                    {{/foreach}}
+                </ol>
+                <a class="cm-panel-action" href="{{@site.url}}/commentarii-mundi/">
+                    Alle Konfliktübersichten {{> "icons/arrow"}}
+                </a>
+            </section>
+        {{/if}}
+    {{/get}}
+{{/if}}

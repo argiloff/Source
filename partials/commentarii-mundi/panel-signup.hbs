@@ -1,0 +1,18 @@
+{{!--
+    Commentarii Mundi newsletter panel.
+
+    Reuses Source's own {{> "email-subscription"}} form, so Ghost Portal handling,
+    loading/success/error states and validation all behave exactly as elsewhere on
+    the site. Only the surrounding presentation is Commentarii Mundi specific.
+--}}
+{{#if @site.members_enabled}}
+    {{#unless @member}}
+        <section class="cm-panel cm-panel-invert">
+            <h2 class="cm-panel-invert-title is-title">Commentarii Mundi<br>updates erhalten</h2>
+            <p class="cm-panel-invert-text is-body">
+                Erhalten Sie die wichtigsten Updates zu globalen Konflikten direkt in Ihr Postfach.
+            </p>
+            {{> "email-subscription" email_field_id="cm-sidebar-email"}}
+        </section>
+    {{/unless}}
+{{/if}}

@@ -1,0 +1,36 @@
+{{!--
+    "Unsere Quellen" — the standing source base behind Commentarii Mundi.
+
+    Deliberately static editorial content, not data: these are the datasets and
+    source classes the publication commits to, and they change when the methodology
+    changes, not when a report is published. The "Quellen & Methodik" link points at
+    window.COMMENTARII.methodologyUrl and stays hidden until one is configured.
+--}}
+<section class="cm-panel">
+    <h2 class="cm-panel-title">Unsere Quellen</h2>
+    <ul class="cm-source-grid">
+        <li class="cm-source">
+            {{> "commentarii-mundi/icons/sources"}}
+            <span class="cm-source-name">ACLED</span>
+            <span class="cm-source-note">Ereignisdaten</span>
+        </li>
+        <li class="cm-source">
+            {{> "commentarii-mundi/icons/report"}}
+            <span class="cm-source-name">UCDP</span>
+            <span class="cm-source-note">Konfliktdatensätze</span>
+        </li>
+        <li class="cm-source">
+            {{> "commentarii-mundi/icons/globe"}}
+            <span class="cm-source-name">Nachrichten</span>
+            <span class="cm-source-note">Internationale Medien</span>
+        </li>
+        <li class="cm-source">
+            {{> "commentarii-mundi/icons/pin"}}
+            <span class="cm-source-name">OSINT</span>
+            <span class="cm-source-note">Soziale Medien &amp; mehr</span>
+        </li>
+    </ul>
+    <a class="cm-panel-action" data-cm-link="methodology" href="#" hidden>
+        Quellen &amp; Methodik {{> "icons/arrow"}}
+    </a>
+</section>

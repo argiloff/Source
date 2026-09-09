@@ -1,0 +1,33 @@
+{{!--
+    "Aktuelle Lage" — how the tracked conflicts distribute across severity levels.
+
+    The counts are not authored anywhere: assets/js/commentarii-mundi.js tallies the
+    [data-cm-severity] markers already rendered by the Top Konflikte panel and sizes
+    the bars against the largest value. Server-rendered markup stays truthful (no
+    invented numbers) and the panel simply stays hidden if JavaScript never runs.
+--}}
+{{#if @custom.commentarii_conflicts}}
+    <section class="cm-panel cm-situation" data-cm-situation hidden>
+        <h2 class="cm-panel-title">Aktuelle Lage</h2>
+        <ul class="cm-situation-list">
+            <li class="cm-situation-row" data-cm-situation-row="critical">
+                <span class="cm-situation-label">Schwerwiegende Konflikte</span>
+                <span class="cm-situation-value" data-cm-situation-value>0</span>
+                <span class="cm-situation-track"><span class="cm-situation-bar is-critical" data-cm-situation-bar></span></span>
+            </li>
+            <li class="cm-situation-row" data-cm-situation-row="serious">
+                <span class="cm-situation-label">Ernste Konflikte</span>
+                <span class="cm-situation-value" data-cm-situation-value>0</span>
+                <span class="cm-situation-track"><span class="cm-situation-bar is-serious" data-cm-situation-bar></span></span>
+            </li>
+            <li class="cm-situation-row" data-cm-situation-row="watch">
+                <span class="cm-situation-label">Unter Beobachtung</span>
+                <span class="cm-situation-value" data-cm-situation-value>0</span>
+                <span class="cm-situation-track"><span class="cm-situation-bar is-watch" data-cm-situation-bar></span></span>
+            </li>
+        </ul>
+        <a class="cm-panel-action" href="{{@site.url}}/commentarii-mundi/">
+            Alle Konflikte {{> "icons/arrow"}}
+        </a>
+    </section>
+{{/if}}

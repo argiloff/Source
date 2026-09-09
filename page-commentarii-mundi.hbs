@@ -1,0 +1,68 @@
+{{!< default}}
+{{!--
+    Commentarii Mundi landing page.
+
+    Ghost picks this up automatically for the page whose slug is
+    "commentarii-mundi", so /commentarii-mundi/ works with no routes.yaml at all.
+    routes.yaml only adds the deeper conflict and region levels on top.
+
+    All editorial content comes from the Ghost page itself, so none of it needs a
+    theme setting (Ghost allows only 20 and upstream Source already uses 19):
+      title          → hero title
+      custom_excerpt → hero subtitle
+      content        → the short introduction below the feed
+
+    Everything else is assembled from Ghost tags, so this file stays a layout and
+    holds no conflict knowledge.
+--}}
+
+{{#post}}
+    {{> "commentarii-mundi/hero"
+        heroTitle=title
+        heroSubtitle=custom_excerpt
+        showAbout=true
+        showStats=true}}
+{{/post}}
+
+<main class="cm-main gh-outer">
+    <div class="cm-main-inner gh-inner">
+
+        {{> "commentarii-mundi/filters" active="all"}}
+
+        <div class="cm-layout">
+            <div class="cm-layout-primary">
+                {{#get "posts" filter="tag:commentariimundi" include="authors,tags" limit="8" as |reports|}}
+                    {{#if reports}}
+                        <div class="cm-report-list">
+                            {{#foreach reports}}
+                                {{> "commentarii-mundi/report-card" lazyLoad=true}}
+                            {{/foreach}}
+                        </div>
+                        <div class="cm-more">
+                            <a class="cm-more-link" href="{{@site.url}}/commentarii-mundi/berichte/">
+                                Weitere Berichte laden {{> "icons/arrow"}}
+                            </a>
+                        </div>
+                    {{else}}
+                        <p class="cm-empty is-body">
+                            Noch keine Berichte. Beiträge mit dem Tag <code>commentariimundi</code> erscheinen hier automatisch.
+                        </p>
+                    {{/if}}
+                {{/get}}
+            </div>
+
+            {{> "commentarii-mundi/sidebar"}}
+        </div>
+
+        {{> "commentarii-mundi/section-conflicts"}}
+
+        {{#post}}
+            {{#if content}}
+                <section class="cm-section cm-about">
+                    <div class="gh-content is-body">{{content}}</div>
+                </section>
+            {{/if}}
+        {{/post}}
+
+    </div>
+</main>

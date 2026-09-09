@@ -1,0 +1,18 @@
+{{!--
+    Commentarii Mundi sidebar.
+
+    Assembles the standing panels in the order the mockup establishes. Each panel
+    hides itself when it has nothing to show, so the column collapses gracefully on
+    a sparsely configured install.
+
+    Parameters:
+    * showSituation / showTopConflicts / showSignup / showSources — pass false to omit
+--}}
+<aside class="cm-sidebar">
+    <div class="cm-sidebar-inner">
+        {{^match showSituation false}}{{> "commentarii-mundi/panel-situation"}}{{/match}}
+        {{^match showTopConflicts false}}{{> "commentarii-mundi/panel-top-conflicts"}}{{/match}}
+        {{^match showSignup false}}{{> "commentarii-mundi/panel-signup"}}{{/match}}
+        {{^match showSources false}}{{> "commentarii-mundi/panel-sources"}}{{/match}}
+    </div>
+</aside>
