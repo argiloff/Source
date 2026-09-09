@@ -3,6 +3,15 @@
 
 {{#post}}
 
+{{!-- Historia Arcana: Commentarii Mundi report strip.
+     Ghost has no tag-conditional post template, so this guarded include is the
+     only way to give Commentarii Mundi reports their own presentation without a
+     per-post custom template selection in the editor. Ordinary Historia Arcana
+     posts do not match the guard and render exactly as upstream Source. --}}
+{{#has tag="commentariimundi"}}
+    {{> "commentarii-mundi/article-header"}}
+{{/has}}
+
 <main class="gh-main">
 
     <article class="gh-article {{post_class}}">
@@ -65,21 +74,33 @@
 
 </main>
 
-{{/post}}
+{{!-- Historia Arcana: Commentarii Mundi reports get conflict-scoped related reports
+     instead of Source's generic "Read more", so a Ukraine report links to other
+     Ukraine reports rather than a mix of conflict and archaeology content.
 
-{{#if @custom.show_related_articles}}
-    {{#get "posts" include="authors" filter="id:-{{post.id}}" limit="4" as |next|}}
-        {{#if next}}
-            <section class="gh-container is-grid gh-outer">
-                <div class="gh-container-inner gh-inner">
-                    <h2 class="gh-container-title">{{t "Read more"}}</h2>
-                    <div class="gh-feed">
-                        {{#foreach next}}
-                            {{> "post-card" lazyLoad=true}}
-                        {{/foreach}}
+     The block below is wrapped in {{#post}} because {{#has}} needs a post context,
+     which the root of this template does not provide. That is also why the filter
+     now reads {{id}} rather than {{post.id}}. The "Read more" markup itself is
+     unchanged from upstream Source. --}}
+{{#has tag="commentariimundi"}}
+    {{> "commentarii-mundi/article-footer"}}
+{{else}}
+    {{#if @custom.show_related_articles}}
+        {{#get "posts" include="authors" filter="id:-{{id}}" limit="4" as |next|}}
+            {{#if next}}
+                <section class="gh-container is-grid gh-outer">
+                    <div class="gh-container-inner gh-inner">
+                        <h2 class="gh-container-title">{{t "Read more"}}</h2>
+                        <div class="gh-feed">
+                            {{#foreach next}}
+                                {{> "post-card" lazyLoad=true}}
+                            {{/foreach}}
+                        </div>
                     </div>
-                </div>
-            </section>
-        {{/if}}
-    {{/get}}
-{{/if}}
+                </section>
+            {{/if}}
+        {{/get}}
+    {{/if}}
+{{/has}}
+
+{{/post}}

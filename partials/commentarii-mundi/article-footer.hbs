@@ -1,0 +1,45 @@
+{{!--
+    Commentarii Mundi block below a report's content: methodology note plus other
+    reports on the same conflict.
+
+    Related reports are scoped to the conflict via the post's primary tag, so a
+    Ukraine report links to Ukraine reports and never to archaeology posts. Falls
+    back to the wider Commentarii Mundi feed when the post has no conflict tag.
+
+    Only ever included from post.hbs behind a {{#has tag="commentariimundi"}} guard.
+
+    Must be called from inside a post context.
+--}}
+<div class="cm-article-footer gh-outer">
+    <div class="cm-article-footer-inner gh-inner">
+
+        <section class="cm-article-sources">
+            <h2 class="cm-section-title is-title">Quellen &amp; Methodik</h2>
+            <p class="is-body">
+                Dieser Bericht beruht auf offen zugänglichen Quellen. Wie Commentarii Mundi
+                Informationen sammelt, gewichtet und überprüft, ist in der Methodik dokumentiert.
+            </p>
+            <a class="cm-panel-action" data-cm-link="methodology" href="#" hidden>
+                Zur Methodik {{> "icons/arrow"}}
+            </a>
+        </section>
+
+        {{!-- No {{#primary_tag}} block: keeping every path on the post context means
+              Ghost's filter interpolation never has to resolve a ../ parent path. --}}
+        {{#if primary_tag}}
+            {{#get "posts" filter="tag:commentariimundi+tag:{{primary_tag.slug}}+id:-{{id}}" limit="4" as |related|}}
+                {{#if related}}
+                    <section class="cm-section">
+                        <h2 class="cm-section-title is-title">Weitere Berichte: {{primary_tag.name}}</h2>
+                        <div class="cm-report-list">
+                            {{#foreach related}}
+                                {{> "commentarii-mundi/report-card" lazyLoad=true hideConflict=true}}
+                            {{/foreach}}
+                        </div>
+                    </section>
+                {{/if}}
+            {{/get}}
+        {{/if}}
+
+    </div>
+</div>
