@@ -1,0 +1,119 @@
+{{!--
+    Commentarii Mundi single report — /commentarii-mundi/ukraine/{slug}/
+
+    The complete article layout for a CM report: breadcrumb, conflict pill, header,
+    content and a sticky sidebar (Auf einen Blick / Inhaltsverzeichnis / Mehr zum
+    Thema / Updates erhalten).
+
+    Included from post.hbs behind {{#has tag="#commentarii-mundi"}}, which is the
+    whole reason post.hbs branches: Ghost cannot select a template by tag, and a
+    custom-*.hbs template would have to be picked per post in the editor.
+
+    Content is rendered with Ghost's {{content}}, so paid and members-only gating is
+    handled by Ghost exactly as on any other post. The theme presents access state,
+    it never enforces it.
+
+    Must be called from inside a post context.
+--}}
+<main class="cm-report-page gh-outer">
+    <div class="cm-report-page-inner gh-inner">
+
+        {{> "commentarii-mundi/breadcrumb"
+            conflictName=primary_tag.name
+            conflictSlug=primary_tag.slug
+            current=title}}
+
+        <div class="cm-report-layout">
+
+            <article class="cm-report-article {{post_class}}">
+
+                <header class="cm-report-header">
+                    <div class="cm-report-header-topline">
+                        {{> "commentarii-mundi/conflict-label"}}
+                        {{> "commentarii-mundi/report-type"}}
+                        {{> "commentarii-mundi/access-badge"}}
+                    </div>
+
+                    <h1 class="cm-report-page-title is-title">{{title}}</h1>
+
+                    {{#if custom_excerpt}}
+                        <p class="cm-report-page-excerpt is-body">{{custom_excerpt}}</p>
+                    {{/if}}
+
+                    <div class="cm-report-byline">
+                        <div class="cm-report-author">
+                            {{#foreach authors}}
+                                {{#if profile_image}}
+                                    <img class="cm-report-avatar" src="{{img_url profile_image size="xs"}}" alt="{{name}}" width="36" height="36">
+                                {{else}}
+                                    <span class="cm-report-avatar">{{> "icons/avatar"}}</span>
+                                {{/if}}
+                            {{/foreach}}
+                            <div class="cm-report-byline-text">
+                                <span class="cm-report-author-name">{{{t "By {authors}" authors=(authors autolink="false" separator=", ")}}}</span>
+                                <span class="cm-report-byline-meta">
+                                    <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD. MMMM YYYY"}}</time>
+                                    {{#if reading_time}} · {{reading_time minute="1 Min. Lesezeit" minutes="% Min. Lesezeit"}}{{/if}}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{!-- Only Teilen: Ghost has no bookmark feature, so the mockup's
+                              "Speichern" would be a button that does nothing. --}}
+                        <a href="#/share" class="gh-button gh-button-share cm-report-share">{{t "Share"}}</a>
+                    </div>
+
+                    {{> "feature-image"}}
+                </header>
+
+                <div class="gh-content cm-report-content is-body{{#if @custom.enable_drop_caps_on_posts}} drop-cap{{/if}}" data-cm-content>
+                    {{content}}
+                </div>
+
+                <section class="cm-article-sources">
+                    <h2 class="cm-section-title is-title">Quellen &amp; Methodik</h2>
+                    <p class="is-body">
+                        Dieser Bericht beruht auf offen zugänglichen Quellen. Wie Commentarii Mundi
+                        Informationen sammelt, gewichtet und überprüft, ist in der Methodik dokumentiert.
+                    </p>
+                    <a class="cm-panel-action" data-cm-link="methodology" href="#" hidden>
+                        Zur Methodik {{> "icons/arrow"}}
+                    </a>
+                </section>
+
+                {{#if comments}}
+                    <div class="cm-report-comments">{{comments}}</div>
+                {{/if}}
+            </article>
+
+            <aside class="cm-sidebar cm-report-sidebar">
+                <div class="cm-sidebar-inner">
+                    {{> "commentarii-mundi/panel-facts"}}
+                    {{> "commentarii-mundi/panel-toc"}}
+                    {{> "commentarii-mundi/panel-topics" limit="3"}}
+                    {{> "commentarii-mundi/panel-signup"}}
+                </div>
+            </aside>
+
+        </div>
+
+        {{!-- Related reports are scoped to this conflict, so a Ukraine report links to
+              Ukraine reports and never into the archaeology archive. Every path resolves
+              on the post context, so Ghost's filter interpolation never needs a ../ --}}
+        {{#if primary_tag}}
+            {{#get "posts" filter="tag:hash-commentarii-mundi+tag:{{primary_tag.slug}}+id:-{{id}}" limit="4" as |related|}}
+                {{#if related}}
+                    <section class="cm-section">
+                        <h2 class="cm-section-title is-title">Weitere Berichte: {{primary_tag.name}}</h2>
+                        <div class="cm-report-list">
+                            {{#foreach related}}
+                                {{> "commentarii-mundi/report-card" lazyLoad=true hideConflict=true}}
+                            {{/foreach}}
+                        </div>
+                    </section>
+                {{/if}}
+            {{/get}}
+        {{/if}}
+
+    </div>
+</main>

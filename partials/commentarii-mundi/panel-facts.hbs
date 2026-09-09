@@ -1,0 +1,75 @@
+{{!--
+    "Auf einen Blick" — the fact card on a Commentarii Mundi report.
+
+    Every row is real Ghost data for this post: the conflict is the primary tag
+    (guaranteed, because #commentarii-mundi is internal and cannot be primary), the
+    status is the report's own severity marker, and the dates are Ghost's.
+
+    Rows with no value are omitted rather than shown empty, so a thinly tagged
+    report gets a short card instead of a card full of dashes.
+
+    Must be called from inside a post context.
+--}}
+<section class="cm-panel cm-facts">
+    <h2 class="cm-panel-title">Auf einen Blick</h2>
+    <dl class="cm-fact-list">
+
+        {{#primary_tag}}
+            <div class="cm-fact">
+                {{> "commentarii-mundi/icons/globe"}}
+                <dt class="cm-fact-label">Konflikt</dt>
+                <dd class="cm-fact-value"><a href="{{> "commentarii-mundi/conflict-url"}}">{{name}}</a></dd>
+            </div>
+        {{/primary_tag}}
+
+        {{#has tag="#schwerwiegend, #ernst, #beobachtung"}}
+            <div class="cm-fact">
+                {{> "commentarii-mundi/icons/shield"}}
+                <dt class="cm-fact-label">Status</dt>
+                <dd class="cm-fact-value">
+                    {{#has tag="#schwerwiegend"}}
+                        {{> "commentarii-mundi/status" severity="critical"}}
+                    {{else}}
+                        {{#has tag="#ernst"}}
+                            {{> "commentarii-mundi/status" severity="serious"}}
+                        {{else}}
+                            {{> "commentarii-mundi/status" severity="watch"}}
+                        {{/has}}
+                    {{/has}}
+                </dd>
+            </div>
+        {{/has}}
+
+        {{!-- Secondary public tags are the regions; the conflict itself is primary.
+              The {{tags}} helper (not foreach — foreach has no separator) filters to
+              public visibility, so the internal publication and severity tags cannot
+              appear here. The row is marked optional because tags.length counts
+              internal tags too and so cannot gate it; the JS drops it when empty. --}}
+        <div class="cm-fact" data-cm-fact-optional>
+            {{> "commentarii-mundi/icons/pin"}}
+            <dt class="cm-fact-label">Regionen</dt>
+            <dd class="cm-fact-value">{{tags from="2" separator=", "}}</dd>
+        </div>
+
+        <div class="cm-fact">
+            {{> "commentarii-mundi/icons/calendar"}}
+            <dt class="cm-fact-label">Veröffentlicht</dt>
+            <dd class="cm-fact-value"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD. MMMM YYYY"}}</time></dd>
+        </div>
+
+        <div class="cm-fact">
+            {{> "commentarii-mundi/icons/clock"}}
+            <dt class="cm-fact-label">Letzte Aktualisierung</dt>
+            <dd class="cm-fact-value"><time datetime="{{date updated_at format="YYYY-MM-DDTHH:mm"}}">{{date updated_at format="DD. MMMM YYYY · HH:mm"}} Uhr</time></dd>
+        </div>
+
+        {{^has visibility="public"}}
+            <div class="cm-fact">
+                {{> "icons/lock"}}
+                <dt class="cm-fact-label">Zugang</dt>
+                <dd class="cm-fact-value">{{> "commentarii-mundi/access-badge"}}</dd>
+            </div>
+        {{/has}}
+
+    </dl>
+</section>

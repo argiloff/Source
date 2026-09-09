@@ -2,20 +2,21 @@
 {{!--
     Individual conflict page — /commentarii-mundi/ukraine/
 
-    Rendered by a routes.yaml channel:
+    Rendered as the index of a routes.yaml collection:
 
       /commentarii-mundi/ukraine/:
-        controller: channel
+        permalink: /commentarii-mundi/ukraine/{slug}/
         template: cm-conflict
         data: tag.ukraine
-        filter: tag:hash-commentarii-mundi
+        filter: tag:hash-commentarii-mundi+tag:ukraine
 
-    A channel, not a collection, so Commentarii Mundi posts keep their existing
-    permalinks and Historia Arcana's URL structure is untouched.
+    A collection, because reports must live under their conflict at
+    /commentarii-mundi/ukraine/{slug}/. Historia Arcana's own posts stay in the
+    root collection and keep their URLs.
 
-    The layout deliberately mirrors the landing page — same hero, same feed, same
-    sidebar — so a reader moving from the global overview into a single conflict
-    stays inside the same publication.
+    This page is the landing page with conflict data: same hero, same filters, same
+    feed, same sidebar. Chronologie and Regionen are appended below the feed, since
+    they only exist at the conflict level.
 
     The feed carries Source's .gh-feed class so the theme's existing infinite-scroll
     pagination works here with no extra JavaScript.
@@ -66,7 +67,7 @@
 
             </div>
 
-            {{> "commentarii-mundi/sidebar" showSituation=false}}
+            {{> "commentarii-mundi/sidebar"}}
         </div>
 
         {{> "commentarii-mundi/section-conflicts" title="Weitere Konflikte"}}

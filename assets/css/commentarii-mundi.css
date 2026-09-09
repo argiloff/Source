@@ -21,8 +21,9 @@ Source has no equivalent for.
   8. Sidebar panels
   9. Conflict grid
  10. Conflict page sections
- 11. Article integration
- 12. Responsive
+ 11. Report page
+ 12. Article integration
+ 13. Responsive
 
 */
 
@@ -957,65 +958,301 @@ Source has no equivalent for.
     color: var(--cm-muted);
 }
 
-/* 11. Article integration
+/* 11. Report page
 /* ---------------------------------------------------------- */
 
-.cm-article-strip {
-    padding-block: 18px;
-    color: var(--cm-invert);
-    background: linear-gradient(160deg, #0c1c2e 0%, #14304c 100%);
+.cm-report-page {
+    flex-grow: 1;
+    padding-block: 28px 72px;
 }
 
-.cm-article-strip-inner {
+.cm-report-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 48px;
+    align-items: start;
+    max-width: 1140px;
+}
+
+.cm-report-article {
+    min-width: 0;
+}
+
+.cm-report-header-topline {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px 20px;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
-.cm-article-publication {
-    font-size: 1.25rem;
+.cm-report-page-title {
+    font-size: clamp(3rem, 3.6vw, 4.2rem);
     font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--cm-invert);
+    letter-spacing: -0.03em;
+    line-height: 1.12;
 }
 
-.cm-article-strip-meta {
+.cm-report-page-excerpt {
+    max-width: 62ch;
+    margin-top: 16px;
+    font-size: 1.75rem;
+    line-height: 1.5;
+    color: var(--cm-muted);
+}
+
+.cm-report-byline {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px 18px;
-    margin-left: auto;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 26px 0 30px;
 }
 
-.cm-article-strip .cm-report-conflict {
-    color: var(--cm-invert);
-}
-
-.cm-article-strip .cm-access {
-    color: var(--cm-invert-muted);
-    border-color: var(--cm-invert-border);
-}
-
-.cm-article-strip .cm-access.is-paid {
-    color: var(--cm-watch);
-    background-color: rgb(242 183 5 / 0.12);
-    border-color: rgb(242 183 5 / 0.3);
-}
-
-.cm-article-updated {
-    display: inline-flex;
+.cm-report-author {
+    display: flex;
     align-items: center;
-    gap: 7px;
-    font-size: 1.25rem;
-    color: var(--cm-invert-muted);
+    gap: 12px;
 }
 
-.cm-article-updated svg {
-    width: 14px;
-    height: 14px;
+.cm-report-avatar {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--cm-surface-sunken);
 }
+
+.cm-report-avatar svg {
+    width: 100%;
+    height: 100%;
+}
+
+.cm-report-byline-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.35rem;
+}
+
+.cm-report-author-name {
+    font-weight: 600;
+}
+
+.cm-report-byline-meta {
+    color: var(--cm-muted);
+}
+
+.cm-report-share {
+    font-size: 1.35rem;
+    padding: 8px 16px;
+}
+
+/* The report page provides its own column, so the article image must not use
+   Source's .gh-canvas full-bleed grid. */
+.cm-report-article .gh-article-image {
+    margin: 0 0 32px;
+}
+
+.cm-report-article .gh-article-image img {
+    width: 100%;
+    border-radius: var(--cm-radius);
+}
+
+.cm-report-article .gh-article-image figcaption {
+    margin-top: 10px;
+    font-size: 1.25rem;
+    text-align: center;
+    color: var(--cm-muted);
+}
+
+/* .gh-content outside .gh-canvas has no grid to place children into, so restore a
+   single readable column and let wide/full cards break out symmetrically. */
+.cm-report-content > * {
+    max-width: 100%;
+}
+
+.cm-report-content :is(.kg-width-wide, .kg-width-full) {
+    margin-inline: 0;
+}
+
+.cm-report-sidebar {
+    min-width: 0;
+}
+
+.cm-facts .cm-fact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+}
+
+.cm-fact {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    column-gap: 12px;
+}
+
+.cm-fact svg {
+    grid-row: 1 / 3;
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    color: var(--cm-muted);
+}
+
+.cm-fact-label {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.cm-fact-value {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.45;
+    color: var(--cm-muted);
+}
+
+.cm-fact-value a {
+    color: var(--cm-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.cm-toc-list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: cm-toc;
+}
+
+.cm-toc-item + .cm-toc-item {
+    border-top: 1px solid var(--cm-border);
+}
+
+.cm-toc-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 0;
+    font-size: 1.35rem;
+    line-height: 1.4;
+}
+
+.cm-toc-link:hover {
+    opacity: 1;
+    color: var(--cm-ink);
+}
+
+.cm-toc-number {
+    color: var(--cm-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.cm-toc-item.is-sub .cm-toc-link {
+    padding-left: 18px;
+    font-size: 1.3rem;
+    color: var(--cm-muted);
+}
+
+.cm-toc-chevron {
+    align-self: center;
+    color: var(--cm-muted);
+}
+
+.cm-toc-chevron svg {
+    width: 13px;
+    height: 13px;
+}
+
+.cm-topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cm-topic + .cm-topic {
+    border-top: 1px solid var(--cm-border);
+}
+
+.cm-topic-link {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.cm-topic-link:hover {
+    opacity: 1;
+}
+
+.cm-topic-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--cm-radius-sm);
+    overflow: hidden;
+    background-color: var(--cm-surface-sunken);
+}
+
+.cm-topic-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cm-topic-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.cm-topic-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.cm-topic-note {
+    font-size: 1.25rem;
+    line-height: 1.35;
+    color: var(--cm-muted);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.cm-topic-count {
+    font-size: 1.2rem;
+    color: var(--cm-muted);
+}
+
+.cm-breadcrumb-current {
+    display: inline-block;
+    max-width: 46ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.cm-report-comments {
+    margin-top: 48px;
+}
+
+.cm-report-article .cm-article-sources {
+    margin-top: 40px;
+}
+
+/* 12. Article integration
+/* ---------------------------------------------------------- */
 
 .cm-article-footer {
     padding-block: 8px 56px;
@@ -1077,12 +1314,17 @@ Source has no equivalent for.
     height: 88px;
 }
 
-/* 12. Responsive
+/* 13. Responsive
 /* ---------------------------------------------------------- */
 
 @media (max-width: 1200px) {
     .cm-layout {
         grid-template-columns: minmax(0, 1fr) 320px;
+    }
+
+    .cm-report-layout {
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 36px;
     }
 
     .cm-conflict-grid {
@@ -1094,8 +1336,20 @@ Source has no equivalent for.
     /* Single column: identity first, then the map, then the feed. The sidebar
        becomes a two-up row of panels rather than a shrunken column. */
     .cm-hero-inner,
-    .cm-layout {
+    .cm-layout,
+    .cm-report-layout {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* On the report page the sidebar follows the article rather than sitting
+       beside it, and the table of contents is dropped: a TOC below the text it
+       indexes is navigation pointing backwards. */
+    .cm-report-sidebar {
+        margin-top: 48px;
+    }
+
+    .cm-toc {
+        display: none;
     }
 
     .cm-sidebar-inner {
@@ -1148,6 +1402,10 @@ Source has no equivalent for.
         grid-template-columns: minmax(0, 1fr);
     }
 
+    .cm-report-byline {
+        margin: 20px 0 24px;
+    }
+
     .cm-section {
         margin-top: 36px;
     }
@@ -1171,10 +1429,6 @@ Source has no equivalent for.
 
     .cm-filter {
         flex: none;
-    }
-
-    .cm-article-strip-meta {
-        margin-left: 0;
     }
 
     .cm-promo {

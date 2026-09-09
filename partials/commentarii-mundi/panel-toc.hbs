@@ -1,0 +1,14 @@
+{{!--
+    "Inhaltsverzeichnis".
+
+    Built client-side from the h2/h3 headings Ghost renders inside .gh-content —
+    the theme has no access to the post's heading structure at render time, and
+    Ghost's editor does not produce an outline field.
+
+    Stays hidden unless at least two headings are found, so short reports do not
+    get a one-item table of contents.
+--}}
+<nav class="cm-panel cm-toc" data-cm-toc hidden aria-labelledby="cm-toc-title">
+    <h2 class="cm-panel-title" id="cm-toc-title">Inhaltsverzeichnis</h2>
+    <ol class="cm-toc-list" data-cm-toc-list></ol>
+</nav>

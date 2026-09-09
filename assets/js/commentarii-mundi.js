@@ -215,7 +215,87 @@
         });
     }
 
+    /* "Auf einen Blick" rows whose value came out empty.
+       Some rows cannot be gated in Handlebars — the regions row depends on the post
+       having a second PUBLIC tag, but tags.length counts internal tags too. Rather
+       than render a row with an empty value, drop it here. */
+    function pruneEmptyFacts() {
+        document.querySelectorAll('[data-cm-fact-optional]').forEach(function (fact) {
+            var value = fact.querySelector('.cm-fact-value');
+            if (!value || value.textContent.trim() === '') fact.remove();
+        });
+    }
+
+    /* Table of contents.
+       Ghost exposes no outline for a post, so the list is built from the rendered
+       headings. Needs at least two, otherwise the panel is not worth its space. */
+    function buildToc() {
+        var toc = document.querySelector('[data-cm-toc]');
+        var content = document.querySelector('[data-cm-content]');
+        if (!toc || !content) return;
+
+        var list = toc.querySelector('[data-cm-toc-list]');
+        var headings = content.querySelectorAll('h2, h3');
+        if (!list || headings.length < 2) return;
+
+        var counter = 0;
+        var used = Object.create(null);
+
+        headings.forEach(function (heading) {
+            var text = heading.textContent.trim();
+            if (!text) return;
+
+            if (!heading.id) {
+                var base = 'cm-' + text.toLowerCase()
+                    .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+                    .replace(/^-+|-+$/g, '');
+                var id = base || 'cm-abschnitt';
+                var n = 2;
+                while (used[id] || document.getElementById(id)) {
+                    id = base + '-' + n++;
+                }
+                heading.id = id;
+            }
+            used[heading.id] = true;
+
+            var isSub = heading.tagName === 'H3';
+            var item = document.createElement('li');
+            item.className = 'cm-toc-item' + (isSub ? ' is-sub' : '');
+
+            var link = document.createElement('a');
+            link.className = 'cm-toc-link';
+            link.href = '#' + heading.id;
+
+            if (!isSub) {
+                counter += 1;
+                var number = document.createElement('span');
+                number.className = 'cm-toc-number';
+                number.textContent = counter + '.';
+                link.appendChild(number);
+            } else {
+                link.appendChild(document.createElement('span'));
+            }
+
+            var label = document.createElement('span');
+            label.textContent = text;
+            link.appendChild(label);
+
+            var chevron = document.createElement('span');
+            chevron.className = 'cm-toc-chevron';
+            chevron.setAttribute('aria-hidden', 'true');
+            chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.375 5.625 5.625L7.5 15.625"/></svg>';
+            link.appendChild(chevron);
+
+            item.appendChild(link);
+            list.appendChild(item);
+        });
+
+        if (list.children.length) reveal(toc);
+    }
+
     function init() {
+        pruneEmptyFacts();
+        buildToc();
         markActiveFilter();
         dedupeRegions();
         nestRegionUrls();

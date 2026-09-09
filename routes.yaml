@@ -1,64 +1,57 @@
 # Historia Arcana — routes for Commentarii Mundi
 #
 # NOT part of the theme. Upload this in Ghost Admin → Settings → Labs → Routes.
-# The theme works without it: /commentarii-mundi/ still resolves through the Ghost
-# page, and conflicts fall back to Ghost's own /tag/{slug}/ URLs. This file only
-# adds the nested levels.
 #
 # ---------------------------------------------------------------------------
-# Why channels and not collections
+# The three levels
 # ---------------------------------------------------------------------------
-# A collection OWNS the permalinks of the posts it matches, and a post can belong
-# to exactly one collection. Routing Commentarii Mundi through collections would
-# therefore move every CM post off its current /{slug}/ URL, and a later region
-# collection would steal posts from its parent conflict collection.
+#   /commentarii-mundi/                    landing page (a Ghost page — no route
+#                                          needed, resolved by slug)
+#   /commentarii-mundi/ukraine/            conflict overview, cm-conflict.hbs
+#   /commentarii-mundi/ukraine/{slug}/     single report, post.hbs → CM layout
 #
-# A channel is a filtered VIEW. It owns no permalinks, so:
-#   - every existing Historia Arcana URL is untouched
-#   - conflict and region levels coexist without competing for posts
-#   - adding a conflict is three lines here, with no content migration
+# ---------------------------------------------------------------------------
+# Why collections here, and channels for regions
+# ---------------------------------------------------------------------------
+# A collection OWNS the permalinks of the posts it matches, which is exactly what
+# is wanted: reports must live under their conflict. The usual cost — moving posts
+# off their existing URLs — is zero here, because Commentarii Mundi is new content
+# with no published URLs to break. Historia Arcana's own posts stay in the root
+# collection and are untouched.
+#
+# A post can belong to only ONE collection, so:
+#   - conflict collections MUST be listed before the root "/" collection
+#   - a report tagged with two conflicts lands in whichever is listed first
+#   - regions must NOT be collections, or they would steal posts from their parent
+#     conflict. Regions are channels (below), which own no permalinks.
 #
 # ---------------------------------------------------------------------------
 # Adding a conflict
 # ---------------------------------------------------------------------------
-# 1. Create the Ghost tag (e.g. "ukraine"); give it a description and a feature
+# 1. Create the public Ghost tag (e.g. "ukraine") with a description and a feature
 #    image — the theme uses both on the conflict cards.
-# 2. Add its slug to the "commentarii_conflicts" setting in Ghost Admin → Design.
-# 3. Copy a block below, replacing the slug in both the route and `data`.
+# 2. Add its slug to "commentarii_conflicts" in Ghost Admin → Design.
+# 3. Copy a collection block below, replacing the slug in the route, the permalink,
+#    `data` and `filter`.
+#
+# The publication tag is INTERNAL: display form #commentarii-mundi, slug
+# hash-commentarii-mundi. Filters must use the slug.
 
 routes:
 
-  # Full report archive — where "Weitere Berichte laden" points.
+  # Full cross-conflict report archive — where "Weitere Berichte laden" points.
+  # A channel, not a collection: these posts already belong to a conflict
+  # collection and cannot belong to a second one.
   /commentarii-mundi/berichte/:
     controller: channel
     template: cm-reports
     filter: tag:hash-commentarii-mundi
 
-  # --- Conflicts ----------------------------------------------------------
-  # `data: tag.<slug>` gives the template its {{#tag}} context (name,
-  # description, feature_image); `filter` scopes the post feed.
-
-  /commentarii-mundi/ukraine/:
-    controller: channel
-    template: cm-conflict
-    data: tag.ukraine
-    filter: tag:hash-commentarii-mundi
-
-  /commentarii-mundi/sudan/:
-    controller: channel
-    template: cm-conflict
-    data: tag.sudan
-    filter: tag:hash-commentarii-mundi
-
-  /commentarii-mundi/myanmar/:
-    controller: channel
-    template: cm-conflict
-    data: tag.myanmar
-    filter: tag:hash-commentarii-mundi
-
   # --- Regions ------------------------------------------------------------
-  # The deepest level. Commented out until the region tags exist; uncommenting
-  # is safe at any time and moves no posts.
+  # The deepest level. Channels, so they never compete with the conflict
+  # collection for posts. Declared before the collections below so the explicit
+  # route wins over the /commentarii-mundi/ukraine/{slug}/ permalink pattern —
+  # which also means a region slug must not collide with a report slug.
   #
   # /commentarii-mundi/ukraine/mykolaiv/:
   #   controller: channel
@@ -66,15 +59,39 @@ routes:
   #   data: tag.mykolaiv
   #   filter: tag:hash-commentarii-mundi+tag:ukraine
 
-# Collections and taxonomies are declared exactly as Ghost's defaults so that
-# uploading this file changes nothing about the rest of Historia Arcana. Ghost
-# replaces its entire routing config with this file, so these blocks are
-# required — omitting them would drop the site's normal URLs.
-
 collections:
+
+  # --- Conflicts ----------------------------------------------------------
+  # `template` renders the overview at the collection root; `data` gives it the
+  # {{#tag}} context (name, description, feature_image); `permalink` puts each
+  # report underneath its conflict.
+
+  /commentarii-mundi/ukraine/:
+    permalink: /commentarii-mundi/ukraine/{slug}/
+    template: cm-conflict
+    data: tag.ukraine
+    filter: tag:hash-commentarii-mundi+tag:ukraine
+
+  /commentarii-mundi/sudan/:
+    permalink: /commentarii-mundi/sudan/{slug}/
+    template: cm-conflict
+    data: tag.sudan
+    filter: tag:hash-commentarii-mundi+tag:sudan
+
+  /commentarii-mundi/myanmar/:
+    permalink: /commentarii-mundi/myanmar/{slug}/
+    template: cm-conflict
+    data: tag.myanmar
+    filter: tag:hash-commentarii-mundi+tag:myanmar
+
+  # Everything else — Historia Arcana's normal posts. MUST stay last: the first
+  # matching collection wins, and this one matches everything.
   /:
     permalink: /{slug}/
     template: index
+
+# Ghost replaces its entire routing config with this file, so the taxonomies block
+# is required. Omitting it would drop /tag/ and /author/ across the whole site.
 
 taxonomies:
   tag: /tag/{slug}/

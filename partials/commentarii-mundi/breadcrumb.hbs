@@ -2,12 +2,16 @@
     Commentarii Mundi breadcrumb: Historia Arcana → Commentarii Mundi → Konflikt → Region
 
     Parameters:
-    * conflictName / conflictUrl — optional, the conflict level
-    * regionName                 — optional, the region level
-    * current                    — optional, plain text for the deepest level
+    * conflictName / conflictSlug — optional, the conflict level
+    * regionName                  — optional, the region level
+    * current                     — optional, plain text for the deepest level
 
-    Establishes the World → Conflict → Region → Event hierarchy the architecture
-    is designed around, and degrades to two levels on the landing page.
+    conflictSlug rather than a ready-made URL, because the nested conflict URL is
+    assembled here; passing the tag's own {{url}} would link to /tag/{slug}/ and
+    break out of the publication.
+
+    Establishes the World → Conflict → Region → Event hierarchy the architecture is
+    designed around, and degrades to two levels on the landing page.
 --}}
 <nav class="cm-breadcrumb" aria-label="Brotkrumen-Navigation">
     <ol class="cm-breadcrumb-list">
@@ -21,10 +25,14 @@
         </li>
         {{#if conflictName}}
             <li>
-                {{#if regionName}}
-                    <a href="{{conflictUrl}}">{{conflictName}}</a>
+                {{#if current}}
+                    <a href="{{@site.url}}/commentarii-mundi/{{conflictSlug}}/">{{conflictName}}</a>
                 {{else}}
-                    <span aria-current="page">{{conflictName}}</span>
+                    {{#if regionName}}
+                        <a href="{{@site.url}}/commentarii-mundi/{{conflictSlug}}/">{{conflictName}}</a>
+                    {{else}}
+                        <span aria-current="page">{{conflictName}}</span>
+                    {{/if}}
                 {{/if}}
             </li>
         {{/if}}
@@ -32,7 +40,7 @@
             <li><span aria-current="page">{{regionName}}</span></li>
         {{/if}}
         {{#if current}}
-            <li><span aria-current="page">{{current}}</span></li>
+            <li><span class="cm-breadcrumb-current" aria-current="page">{{current}}</span></li>
         {{/if}}
     </ol>
 </nav>

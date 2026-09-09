@@ -1,0 +1,40 @@
+{{!--
+    "Mehr zum Thema" — other conflicts, as compact thumbnail rows.
+
+    Reuses the configured conflict roster rather than Ghost's related-posts logic,
+    so the sidebar points sideways across the publication (Sudan, Myanmar) instead
+    of repeating the related reports already listed under the article.
+
+    Parameters:
+    * limit — pass a literal; Ghost only interpolates {{...}} inside get's filter
+--}}
+{{#if @custom.commentarii_conflicts}}
+    {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" include="count.posts" order="count.posts desc" limit=limit as |topics|}}
+        {{#if topics}}
+            <section class="cm-panel">
+                <h2 class="cm-panel-title">Mehr zum Thema</h2>
+                <ul class="cm-topic-list">
+                    {{#foreach topics}}
+                        <li class="cm-topic">
+                            <a class="cm-topic-link" href="{{> "commentarii-mundi/conflict-url"}}">
+                                <span class="cm-topic-thumb">
+                                    {{#if feature_image}}
+                                        <img src="{{img_url feature_image size="s"}}" alt="" loading="lazy" width="56" height="56">
+                                    {{/if}}
+                                </span>
+                                <span class="cm-topic-body">
+                                    <span class="cm-topic-name">{{name}}</span>
+                                    {{#if description}}<span class="cm-topic-note">{{description}}</span>{{/if}}
+                                    <span class="cm-topic-count">{{count.posts}} {{#match count.posts 1}}Bericht{{else}}Berichte{{/match}}</span>
+                                </span>
+                            </a>
+                        </li>
+                    {{/foreach}}
+                </ul>
+                <a class="cm-panel-action" href="{{@site.url}}/commentarii-mundi/">
+                    Alle Konflikte ansehen {{> "icons/arrow"}}
+                </a>
+            </section>
+        {{/if}}
+    {{/get}}
+{{/if}}

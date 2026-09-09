@@ -11,10 +11,14 @@
         data: tag.mykolaiv
         filter: tag:hash-commentarii-mundi+tag:ukraine
 
-    Channels do not own permalinks, so this level can be added for any region at any
-    time without moving a single post or colliding with the conflict channel above
-    it. This template exists to prove that — requirement 3 asks that the region level
-    not be made impossible, and this is the file that keeps it cheap.
+    A channel, deliberately: the conflict level is a collection and owns these posts'
+    permalinks. A region collection would steal them from their parent conflict, and
+    a post can belong to only one collection. Channels own no permalinks, so the
+    region level can be added for any region at any time without moving a post.
+
+    Because the region route is explicit, it wins over the conflict collection's
+    /commentarii-mundi/ukraine/{slug}/ permalink pattern — so a region slug must not
+    collide with a report slug.
 
     The breadcrumb shows Historia Arcana → Commentarii Mundi → Region. To insert the
     conflict level, copy this file per conflict (cm-region-ukraine.hbs) and pass

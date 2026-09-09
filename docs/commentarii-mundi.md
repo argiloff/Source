@@ -19,6 +19,8 @@ page-commentarii-mundi.hbs          landing page   /commentarii-mundi/
 cm-conflict.hbs                     conflict page  /commentarii-mundi/ukraine/
 cm-region.hbs                       region page    /commentarii-mundi/ukraine/mykolaiv/
 cm-reports.hbs                      full archive   /commentarii-mundi/berichte/
+                                    single report  /commentarii-mundi/ukraine/{slug}/
+                                    is post.hbs -> partials/commentarii-mundi/report.hbs
 
 partials/commentarii-mundi/
     hero.hbs              masthead with identity + map
@@ -43,10 +45,12 @@ partials/commentarii-mundi/
     timeline.hbs          Chronologie
     regions.hbs           Wichtige Regionen
     actors.hbs            Akteure (available, not wired in — see §7)
-    article-header.hbs    CM strip above a report
-    article-footer.hbs    methodology + conflict-scoped related reports
-    promo.hbs             CM cross-promotion for Historia Arcana posts
-    icons/*.hbs           seven icons Source does not ship
+    report.hbs            the single-report layout (mockup 2)
+    panel-facts.hbs       "Auf einen Blick"
+    panel-toc.hbs         "Inhaltsverzeichnis"
+    panel-topics.hbs      "Mehr zum Thema"
+    promo.hbs             CM cross-promotion (available, not wired in — see §7)
+    icons/*.hbs           nine icons Source does not ship
 
 assets/css/commentarii-mundi.css    all .cm-* styles
 assets/js/commentarii-mundi.js      progressive enhancement
@@ -62,7 +66,7 @@ globs `assets/js/*.js`.
 | File | Change | Why it could not be additive |
 |---|---|---|
 | `assets/css/screen.css` | 1 `@import` + comment, at the top | `postcss-easy-import` rejects `@import` after any other statement, so the bottom of the file was not an option. Load order is harmless: every rule in the imported file is `.cm-*` namespaced, and the only Source classes it touches (`.is-title`, `.is-body`, `.gh-form`) are reached through higher-specificity selectors. |
-| `post.hbs` | guarded include at the top; related-posts block wrapped | Ghost has no tag-conditional post template. The alternative — a `custom-*.hbs` template — must be picked per post in the editor, which does not fit an Admin-API-driven backend. The related block moved inside `{{#post}}` because `{{#has}}` needs a post context; its markup is otherwise byte-identical to upstream. |
+| `post.hbs` | becomes a router: `{{#has tag="#commentarii-mundi"}}` → CM layout, `{{else}}` → the upstream article | Ghost cannot select a template by tag. The alternative — a `custom-*.hbs` template — must be picked per post in the editor, which does not fit an Admin-API-driven backend. The upstream branch is **wrapped, not re-indented**, so its lines stay byte-identical and future merges apply cleanly. Its related-posts filter reads `{{id}}` rather than `{{post.id}}` because it now sits inside `{{#post}}`. |
 | `package.json` | 1 entry in `config.custom` | See §2. |
 
 Everything else in the repository is untouched upstream Source.
@@ -105,47 +109,65 @@ install shows nothing rather than a dead link or an invented number.
 
 ## 3. URLs and routes.yaml
 
-`/commentarii-mundi/` works with **no** routing config: it is a Ghost page whose slug
-is `commentarii-mundi`, and Ghost picks up `page-commentarii-mundi.hbs` automatically.
+Three levels, plus the reports underneath:
 
-The deeper levels need `routes.yaml`, uploaded in **Ghost Admin → Settings → Labs →
-Routes**. A copy lives in the repository root as the maintained reference.
+| URL | Template | Layout |
+|---|---|---|
+| `/commentarii-mundi/` | `page-commentarii-mundi.hbs` | mockup 1, global |
+| `/commentarii-mundi/ukraine/` | `cm-conflict.hbs` | mockup 1, scoped to Ukraine |
+| `/commentarii-mundi/ukraine/{slug}/` | `post.hbs` → `report.hbs` | mockup 2, single report |
+| `/commentarii-mundi/ukraine/mykolaiv/` | `cm-region.hbs` | region level (opt-in) |
+| `/commentarii-mundi/berichte/` | `cm-reports.hbs` | all reports, cross-conflict |
 
-### Channels, not collections
+Ordinary Historia Arcana posts stay at `/{slug}/` on the upstream Source layout.
 
-This matters, so it is worth being explicit.
+The landing page needs **no** routing config — it is a Ghost page whose slug is
+`commentarii-mundi`, and Ghost resolves `page-commentarii-mundi.hbs` automatically.
+Everything below it needs `routes.yaml`, uploaded in **Ghost Admin → Settings → Labs
+→ Routes**. A maintained copy lives in the repository root.
 
-A **collection** owns the permalinks of the posts it matches, and a post can belong to
-exactly one collection. Routing Commentarii Mundi through collections would move every
-CM post off its current `/{slug}/` URL, and a later region collection would compete
-with its parent conflict collection for the same posts.
+### Collections for conflicts, channels for regions
 
-A **channel** is a filtered view that owns no permalinks. So:
+A **collection** owns the permalinks of the posts it matches. That is exactly what
+the conflict level needs: reports must live at `/commentarii-mundi/ukraine/{slug}/`.
+The usual cost of a collection — moving posts off their existing URLs — is zero
+here, because Commentarii Mundi is new content with no published URLs to break.
+Historia Arcana's posts stay in the root collection, untouched.
 
-- every existing Historia Arcana URL is untouched
-- conflict and region levels coexist without stealing posts from each other
-- adding a conflict is three lines of YAML and no content migration
+A post can belong to only **one** collection, which has three consequences:
+
+- conflict collections must be listed **before** the root `/` collection, since the
+  first match wins
+- a report tagged with two conflicts lands in whichever collection is listed first
+- regions cannot be collections — they would steal posts from their parent conflict
+
+So regions are **channels**, which own no permalinks and therefore never compete for
+posts. Because a channel route is explicit, it resolves ahead of the conflict
+collection's `{slug}` permalink pattern — which means a region slug must not collide
+with a report slug.
+
+`/commentarii-mundi/berichte/` is a channel for the same reason: those posts already
+belong to a conflict collection.
 
 ```yaml
-/commentarii-mundi/ukraine/:
-  controller: channel
-  template: cm-conflict
-  data: tag.ukraine
-  filter: tag:hash-commentarii-mundi
+collections:
+  /commentarii-mundi/ukraine/:
+    permalink: /commentarii-mundi/ukraine/{slug}/
+    template: cm-conflict
+    data: tag.ukraine
+    filter: tag:hash-commentarii-mundi+tag:ukraine
+  /:                        # must stay last
+    permalink: /{slug}/
+    template: index
 ```
 
 Ghost replaces its *entire* routing config with the uploaded file, so `routes.yaml`
-also restates Ghost's default collection and taxonomies. Removing those blocks would
+also restates the root collection and the taxonomies. Removing those blocks would
 break the rest of the site.
 
-**Without routes.yaml:** conflict links 404. To run in that mode, edit the single line
-in `partials/commentarii-mundi/conflict-url.hbs` to emit `{{url}}` instead, and
-conflicts fall back to Ghost's native `/tag/{slug}/` pages — those are *public*
-conflict tags, so they route fine.
-
-The full report archive has no such fallback: `#commentarii-mundi` is internal and
-Ghost does not route internal tags, so `/commentarii-mundi/berichte/` needs the
-channel.
+**Without routes.yaml** only the landing page works; conflict URLs 404 and reports
+stay at `/{slug}/`. The single-report layout still applies, because it is driven by
+the tag in `post.hbs` rather than by the route.
 
 ---
 
@@ -247,11 +269,19 @@ Stated plainly rather than papered over.
    the number.
 2. **Map pins** are absent until a real map is embedded — see §6.
 3. **Per-report source counts** are absent — see §6.
-4. **Akteure** (`actors.hbs`) exists as a component but is not wired into
+4. **"Speichern"** from mockup 2 is not rendered. Ghost has no bookmark feature, so
+   the button would do nothing. "Teilen" is real and uses Ghost's `#/share`.
+5. **The table of contents** is built client-side from the rendered `h2`/`h3`
+   headings — Ghost exposes no outline for a post. It needs at least two headings,
+   and it is hidden below 992px, where a TOC would sit *after* the text it indexes.
+6. **`promo.hbs`** ("Sieh mehr mit Commentarii Mundi") is built but not wired in.
+   It belongs on ordinary Historia Arcana posts, which requirement 9 keeps as
+   upstream Source; enabling it means one include in `post.hbs`.
+7. **Akteure** (`actors.hbs`) exists as a component but is not wired into
    `cm-conflict.hbs`. Actors vary per conflict, and with one theme setting available
    there is no honest way to configure a per-conflict list. To enable it for a single
    conflict, copy `cm-conflict.hbs` to a per-conflict template and pass explicit slugs.
-5. **`order="count.posts desc"`** in `panel-top-conflicts.hbs` is the one query option
+8. **`order="count.posts desc"`** in `panel-top-conflicts.hbs` is the one query option
    worth checking on first load; if your Ghost version rejects it, drop the `order`.
 
 ---
