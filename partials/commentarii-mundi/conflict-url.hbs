@@ -1,0 +1,15 @@
+{{!--
+    Resolves the canonical URL for a conflict.
+
+    Must be called from inside a tag context (e.g. {{#foreach tags}}).
+
+    Conflicts live at /commentarii-mundi/{slug}/ as Ghost channels declared in
+    routes.yaml. This is server-rendered rather than JavaScript-assembled because
+    it is primary navigation and must work for crawlers and no-JS readers.
+
+    Not a theme setting: Ghost caps config.custom at 20 entries and upstream Source
+    already uses 19, so the single remaining slot went to the conflict roster. To
+    fall back to Ghost's native /tag/{slug}/ URLs — i.e. to run without routes.yaml
+    — replace the line below with {{url}}. That is the only edit required.
+--}}
+{{~@site.url}}/commentarii-mundi/{{slug}}/

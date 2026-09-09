@@ -1,0 +1,16 @@
+{{!--
+    Conflict status indicator.
+
+    Parameters:
+    * severity — critical | serious | watch  (defaults to watch)
+    * label    — optional override for the visible text
+    * size     — optional "lg" for the conflict page header
+
+    Severity is derived from the internal tag on a conflict's most recent report
+    (#schwerwiegend / #ernst / #beobachtung), so the OSINT backend can set it via
+    the Ghost Admin API without the theme knowing anything about conflict data.
+--}}
+<span class="cm-status is-{{#if severity}}{{severity}}{{else}}watch{{/if}}{{#match size "lg"}} is-lg{{/match}}" data-cm-severity="{{#if severity}}{{severity}}{{else}}watch{{/if}}">
+    <span class="cm-status-dot" aria-hidden="true"></span>
+    <span class="cm-status-label">{{#if label}}{{label}}{{else}}{{#match severity "critical"}}Schwerwiegend{{else match severity "serious"}}Ernst{{else}}Beobachtung{{/match}}{{/if}}</span>
+</span>

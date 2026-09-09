@@ -211,6 +211,10 @@
                 "type": "boolean",
                 "default": true,
                 "group": "post"
+            },
+            "commentarii_conflicts": {
+                "type": "text",
+                "description": "Commentarii Mundi: comma-separated conflict tag slugs, e.g. ukraine,sudan,myanmar"
             }
         }
     }

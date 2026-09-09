@@ -1,0 +1,20 @@
+{{!--
+    Free / members / premium indicator.
+
+    Reads Ghost's real post visibility. The theme presents the access state, it
+    never enforces it — Ghost's own content gating does that. Public posts get no
+    badge at all, which keeps the feed calm and non-commercial.
+
+    Must be called from inside a post context.
+--}}
+{{^has visibility="public"}}
+    {{#has visibility="paid,tiers"}}
+        <span class="cm-access is-paid{{#if access}} is-unlocked{{/if}}">
+            {{> "icons/lock"}}<span>Premium</span>
+        </span>
+    {{else}}
+        <span class="cm-access is-members{{#if access}} is-unlocked{{/if}}">
+            {{> "icons/lock"}}<span>Mitglieder</span>
+        </span>
+    {{/has}}
+{{/has}}

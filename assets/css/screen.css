@@ -1,3 +1,10 @@
+/* Historia Arcana customisation — the only change to this upstream Source file.
+   All Commentarii Mundi styles live in their own file so future upstream merges
+   only ever touch this single line. It sits at the top because postcss-easy-import
+   rejects @import after any other statement; load order is irrelevant since every
+   rule in it is .cm-* namespaced and none collide with a Source selector. */
+@import "commentarii-mundi.css";
+
 /* Table of contents
 /* ------------------------------------------------------------
 

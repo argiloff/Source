@@ -1,0 +1,38 @@
+{{!--
+    Commentarii Mundi breadcrumb: Historia Arcana → Commentarii Mundi → Konflikt → Region
+
+    Parameters:
+    * conflictName / conflictUrl — optional, the conflict level
+    * regionName                 — optional, the region level
+    * current                    — optional, plain text for the deepest level
+
+    Establishes the World → Conflict → Region → Event hierarchy the architecture
+    is designed around, and degrades to two levels on the landing page.
+--}}
+<nav class="cm-breadcrumb" aria-label="Brotkrumen-Navigation">
+    <ol class="cm-breadcrumb-list">
+        <li><a href="{{@site.url}}/">{{@site.title}}</a></li>
+        <li>
+            {{#if conflictName}}
+                <a href="{{@site.url}}/commentarii-mundi/">Commentarii Mundi</a>
+            {{else}}
+                <span aria-current="page">Commentarii Mundi</span>
+            {{/if}}
+        </li>
+        {{#if conflictName}}
+            <li>
+                {{#if regionName}}
+                    <a href="{{conflictUrl}}">{{conflictName}}</a>
+                {{else}}
+                    <span aria-current="page">{{conflictName}}</span>
+                {{/if}}
+            </li>
+        {{/if}}
+        {{#if regionName}}
+            <li><span aria-current="page">{{regionName}}</span></li>
+        {{/if}}
+        {{#if current}}
+            <li><span aria-current="page">{{current}}</span></li>
+        {{/if}}
+    </ol>
+</nav>
