@@ -1,0 +1,23 @@
+{{!--
+    Renders the conflict a report belongs to, e.g. "● UKRAINE".
+
+    Must be called from inside a post context.
+
+    Tag order tolerance: the conflict is normally the post's primary tag, but if
+    "commentariimundi" was placed first instead, the next tag is used. That way
+    both tag orderings from the editorial guidelines produce the right label.
+--}}
+{{#primary_tag}}
+    {{^match slug "commentariimundi"}}
+        <span class="cm-report-conflict">
+            <span class="cm-status-dot" aria-hidden="true"></span>{{name}}
+        </span>
+    {{/match}}
+{{/primary_tag}}
+{{#match primary_tag.slug "commentariimundi"}}
+    {{#foreach tags from="2" limit="1"}}
+        <span class="cm-report-conflict">
+            <span class="cm-status-dot" aria-hidden="true"></span>{{name}}
+        </span>
+    {{/foreach}}
+{{/match}}

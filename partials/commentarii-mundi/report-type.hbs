@@ -1,0 +1,19 @@
+{{!--
+    Editorial report type badge (Update / Analyse / Hintergrund).
+
+    Driven purely by Ghost tags, per the Commentarii Mundi tag vocabulary.
+    Renders nothing when a report carries none of them.
+
+    Must be called from inside a post context.
+--}}
+{{#has tag="update"}}
+    <span class="cm-report-meta-item">{{> "commentarii-mundi/icons/tag"}}Update</span>
+{{else}}
+    {{#has tag="analyse, analysis"}}
+        <span class="cm-report-meta-item">{{> "commentarii-mundi/icons/tag"}}Analyse</span>
+    {{else}}
+        {{#has tag="hintergrund, background"}}
+            <span class="cm-report-meta-item">{{> "commentarii-mundi/icons/tag"}}Hintergrund</span>
+        {{/has}}
+    {{/has}}
+{{/has}}

@@ -1,0 +1,27 @@
+{{!--
+    Resolves and renders a conflict's current severity.
+
+    Parameters:
+    * conflictSlug — required, the Ghost tag slug of the conflict
+
+    Severity lives on the conflict's most recent report as one of the internal tags
+    #schwerwiegend / #ernst / #beobachtung. Internal tags are invisible to readers
+    and settable through the Ghost Admin API, which makes them the right carrier for
+    machine-written OSINT state. Falls back to "watch" when none is set.
+
+    Always renders the severity word so assistive technology gets it. Wrap the call
+    in .cm-dot-only to show just the coloured dot visually.
+--}}
+{{#get "posts" filter="tag:commentariimundi+tag:{{conflictSlug}}" limit="1" include="tags" as |latest|}}
+    {{#foreach latest}}
+        {{#has tag="#schwerwiegend"}}
+            {{> "commentarii-mundi/status" severity="critical"}}
+        {{else}}
+            {{#has tag="#ernst"}}
+                {{> "commentarii-mundi/status" severity="serious"}}
+            {{else}}
+                {{> "commentarii-mundi/status" severity="watch"}}
+            {{/has}}
+        {{/has}}
+    {{/foreach}}
+{{/get}}

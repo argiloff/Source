@@ -1,0 +1,30 @@
+{{!--
+    Conflict map.
+
+    An integration point, not a mapping framework. The theme renders a calm,
+    intentional placeholder surface plus the severity legend (which is real — it
+    documents the scale used throughout Commentarii Mundi). No pins are ever
+    invented server-side.
+
+    When window.COMMENTARII.mapEmbedUrl is set (Ghost Admin → Code injection, or
+    written by the OSINT backend), assets/js/commentarii-mundi.js swaps the
+    placeholder for an iframe and scopes it to the current conflict.
+
+    Parameters:
+    * title — panel heading
+    * scope — optional conflict slug, passed to the embed as ?conflict=
+--}}
+<figure class="cm-map" data-cm-map {{#if scope}}data-cm-map-scope="{{scope}}"{{/if}}>
+    <figcaption class="cm-map-title">{{#if title}}{{title}}{{else}}Konfliktkarte – Aktuelle Lage{{/if}}</figcaption>
+
+    <div class="cm-map-surface" data-cm-map-surface role="img" aria-label="Platzhalter für die interaktive Konfliktkarte"></div>
+
+    <div class="cm-map-footer">
+        <ul class="cm-map-legend">
+            <li><span class="cm-status-dot is-critical" aria-hidden="true"></span>Schwerwiegend</li>
+            <li><span class="cm-status-dot is-serious" aria-hidden="true"></span>Ernst</li>
+            <li><span class="cm-status-dot is-watch" aria-hidden="true"></span>Beobachtung</li>
+        </ul>
+        <a class="cm-map-cta" data-cm-link="map" href="#" hidden>Zur interaktiven Karte {{> "icons/arrow"}}</a>
+    </div>
+</figure>

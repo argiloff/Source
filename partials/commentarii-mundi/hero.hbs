@@ -1,0 +1,41 @@
+{{!--
+    Commentarii Mundi hero: identity on the left, conflict map on the right.
+
+    Parameters:
+    * heroTitle    — required
+    * heroSubtitle — optional kicker line under the title
+    * heroText     — optional intro paragraph
+    * mapScope     — optional conflict slug to scope the map to
+    * showAbout    — pass true to render the "Über Commentarii Mundi" slot, whose
+                     href comes from window.COMMENTARII.aboutUrl
+    * showStats    — pass true on the landing page
+
+    The dark band is scoped to .cm-hero and never touches Source's own header
+    components, so the Historia Arcana homepage is unaffected.
+--}}
+<header class="cm-hero gh-outer">
+    <div class="cm-hero-inner gh-inner">
+
+        <div class="cm-hero-identity">
+            <p class="cm-hero-eyebrow">{{@site.title}}</p>
+            <h1 class="cm-hero-title is-title">{{heroTitle}}</h1>
+            {{#if heroSubtitle}}
+                <p class="cm-hero-subtitle is-title">{{heroSubtitle}}</p>
+            {{/if}}
+            {{#if heroText}}
+                <p class="cm-hero-text is-body">{{heroText}}</p>
+            {{/if}}
+            {{#if showAbout}}
+                <a class="cm-hero-cta" data-cm-link="about" href="#" hidden>Über Commentarii Mundi {{> "icons/arrow"}}</a>
+            {{/if}}
+            {{#if showStats}}
+                {{> "commentarii-mundi/stats"}}
+            {{/if}}
+        </div>
+
+        <div class="cm-hero-map">
+            {{> "commentarii-mundi/map" scope=mapScope}}
+        </div>
+
+    </div>
+</header>

@@ -1,0 +1,40 @@
+{{!--
+    The four hero statistics.
+
+    "Aktive Konflikte" and "Berichte" are counted from Ghost itself and are
+    server-rendered. The two Ghost cannot know — analysed sources and refresh
+    interval — are slots filled from window.COMMENTARII by the OSINT backend
+    (see docs/commentarii-mundi.md). They stay hidden until a value exists, so
+    the hero never shows a placeholder number.
+--}}
+<ul class="cm-stats">
+    {{#if @custom.commentarii_conflicts}}
+        {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" limit="20" as |conflicts|}}
+            <li class="cm-stat">
+                {{> "commentarii-mundi/icons/globe"}}
+                <span class="cm-stat-value">{{conflicts.length}}</span>
+                <span class="cm-stat-label">Aktive Konflikte</span>
+            </li>
+        {{/get}}
+    {{/if}}
+
+    {{#get "posts" filter="tag:commentariimundi" limit="1"}}
+        <li class="cm-stat">
+            {{> "commentarii-mundi/icons/report"}}
+            <span class="cm-stat-value">{{pagination.total}}</span>
+            <span class="cm-stat-label">Berichte gesamt</span>
+        </li>
+    {{/get}}
+
+    <li class="cm-stat" data-cm-stat="sources" hidden>
+        {{> "commentarii-mundi/icons/sources"}}
+        <span class="cm-stat-value" data-cm-stat-value></span>
+        <span class="cm-stat-label">Quellen analysiert</span>
+    </li>
+
+    <li class="cm-stat" data-cm-stat="interval" hidden>
+        {{> "commentarii-mundi/icons/clock"}}
+        <span class="cm-stat-value" data-cm-stat-value></span>
+        <span class="cm-stat-label">Aktualisierung</span>
+    </li>
+</ul>

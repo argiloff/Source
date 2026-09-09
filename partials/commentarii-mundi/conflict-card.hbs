@@ -1,0 +1,34 @@
+{{!--
+    A conflict overview card in the "Konfliktübersichten" grid.
+
+    Must be called from inside a tag context. Every value shown is a real Ghost
+    tag field — name, description, feature_image and count.posts — so adding a
+    conflict is an editorial action, not a code change.
+--}}
+<article class="cm-conflict-card">
+    <a class="cm-conflict-card-link" href="{{> "commentarii-mundi/conflict-url"}}">
+        <figure class="cm-conflict-card-image">
+            {{#if feature_image}}
+                <img
+                    srcset="{{img_url feature_image size="s" format="webp"}} 320w,
+                            {{img_url feature_image size="m" format="webp"}} 600w,
+                            {{img_url feature_image size="l" format="webp"}} 960w"
+                    sizes="(max-width: 700px) 100vw, 300px"
+                    src="{{img_url feature_image size="m"}}"
+                    alt="Karte: {{name}}"
+                    loading="lazy"
+                >
+            {{/if}}
+        </figure>
+        <div class="cm-conflict-card-body">
+            <h3 class="cm-conflict-card-title is-title">{{name}}</h3>
+            {{#if description}}
+                <p class="cm-conflict-card-description is-body">{{description}}</p>
+            {{/if}}
+            <footer class="cm-conflict-card-meta">
+                <span>{{count.posts}} {{#match count.posts 1}}Bericht{{else}}Berichte{{/match}}</span>
+                <span class="cm-conflict-card-arrow" aria-hidden="true">{{> "icons/arrow"}}</span>
+            </footer>
+        </div>
+    </a>
+</article>

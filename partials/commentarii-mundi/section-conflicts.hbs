@@ -1,0 +1,24 @@
+{{!--
+    "Konfliktübersichten" — the grid of conflict overview cards.
+
+    The roster comes from @custom.commentarii_conflicts, a comma-separated list of
+    Ghost tag slugs set in Ghost Admin → Design. Renders nothing when unconfigured,
+    so a fresh install degrades quietly instead of showing an empty section.
+
+    Parameters:
+    * title — optional heading override
+--}}
+{{#if @custom.commentarii_conflicts}}
+    {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" include="count.posts" limit="20" as |conflicts|}}
+        {{#if conflicts}}
+            <section class="cm-section cm-section-conflicts">
+                <h2 class="cm-section-title is-title">{{#if title}}{{title}}{{else}}Konfliktübersichten{{/if}}</h2>
+                <div class="cm-conflict-grid">
+                    {{#foreach conflicts}}
+                        {{> "commentarii-mundi/conflict-card"}}
+                    {{/foreach}}
+                </div>
+            </section>
+        {{/if}}
+    {{/get}}
+{{/if}}

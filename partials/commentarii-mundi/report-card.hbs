@@ -1,0 +1,51 @@
+{{!--
+    A single Commentarii Mundi report in the main feed.
+
+    Horizontal on desktop (image left, content right), stacked on mobile.
+    Must be called from inside a post context.
+
+    Parameters:
+    * lazyLoad     — pass true for anything below the fold
+    * hideConflict — pass true on a conflict page, where the label is redundant
+
+    data-cm-sources is an integration point: the OSINT backend can fill in the
+    analysed-source count per report. The theme never invents that number.
+--}}
+<article class="cm-report {{post_class}}" data-cm-report="{{id}}">
+    <a class="cm-report-link" href="{{url}}">
+        {{#if feature_image}}
+            <figure class="cm-report-image">
+                <img
+                    srcset="{{img_url feature_image size="s" format="webp"}} 320w,
+                            {{img_url feature_image size="m" format="webp"}} 600w,
+                            {{img_url feature_image size="l" format="webp"}} 960w"
+                    sizes="(max-width: 640px) 100vw, 216px"
+                    src="{{img_url feature_image size="m"}}"
+                    alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                    {{#if lazyLoad}}loading="lazy"{{/if}}
+                >
+            </figure>
+        {{/if}}
+
+        <div class="cm-report-body">
+            <div class="cm-report-topline">
+                {{#unless hideConflict}}
+                    {{> "commentarii-mundi/conflict-label"}}
+                {{/unless}}
+                {{> "commentarii-mundi/access-badge"}}
+            </div>
+
+            <h3 class="cm-report-title is-title">{{title}}</h3>
+
+            {{#if excerpt}}
+                <p class="cm-report-excerpt is-body">{{excerpt words="26"}}</p>
+            {{/if}}
+
+            <footer class="cm-report-meta">
+                <time datetime="{{date format="YYYY-MM-DDTHH:mm"}}">{{date format="DD. MMMM YYYY · HH:mm"}} Uhr</time>
+                <span class="cm-report-meta-item" data-cm-sources hidden>{{> "commentarii-mundi/icons/sources"}}<span data-cm-sources-value></span></span>
+                {{> "commentarii-mundi/report-type"}}
+            </footer>
+        </div>
+    </a>
+</article>

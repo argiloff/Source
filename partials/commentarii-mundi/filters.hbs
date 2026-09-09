@@ -1,0 +1,25 @@
+{{!--
+    Conflict filter pills above the report feed.
+
+    Plain links to the conflict channels rather than client-side filtering: every
+    filter state stays a real, shareable, crawlable URL.
+
+    Parameters:
+    * active — slug of the currently active conflict, or "all"
+
+    The active pill is marked from data-cm-active by assets/js/commentarii-mundi.js.
+    Resolving it in Handlebars would need a parent-scope lookup across two nested
+    block frames, whose depth differs between {{#get}} and {{#foreach}}.
+--}}
+{{#if @custom.commentarii_conflicts}}
+    {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" limit="20" as |conflicts|}}
+        {{#if conflicts}}
+            <nav class="cm-filters" aria-label="Konflikte filtern" data-cm-filters data-cm-active="{{#if active}}{{active}}{{else}}all{{/if}}">
+                <a class="cm-filter" data-cm-filter="all" href="{{@site.url}}/commentarii-mundi/">Alle Updates</a>
+                {{#foreach conflicts}}
+                    <a class="cm-filter" data-cm-filter="{{slug}}" href="{{> "commentarii-mundi/conflict-url"}}">{{name}}</a>
+                {{/foreach}}
+            </nav>
+        {{/if}}
+    {{/get}}
+{{/if}}
