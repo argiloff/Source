@@ -1,0 +1,29 @@
+{{!--
+    Conflict timeline.
+
+    Built from the conflict's own reports in reverse-chronological order — the
+    timeline is the publication record, so it needs no separate data source.
+
+    Parameters:
+    * conflictSlug — required
+    * limit        — number of entries; pass a literal, Ghost only interpolates
+                     {{...}} inside the filter option, not the other get options
+--}}
+{{#get "posts" filter="tag:commentariimundi+tag:{{conflictSlug}}" limit=limit as |entries|}}
+    {{#if entries}}
+        <section class="cm-section">
+            <h2 class="cm-section-title is-title">Chronologie</h2>
+            <ol class="cm-timeline">
+                {{#foreach entries}}
+                    <li class="cm-timeline-item">
+                        <time class="cm-timeline-date" datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD. MMM YYYY"}}</time>
+                        <div class="cm-timeline-body">
+                            <a class="cm-timeline-title" href="{{url}}">{{title}}</a>
+                            {{> "commentarii-mundi/access-badge"}}
+                        </div>
+                    </li>
+                {{/foreach}}
+            </ol>
+        </section>
+    {{/if}}
+{{/get}}

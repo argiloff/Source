@@ -1,0 +1,59 @@
+{{!< default}}
+{{!--
+    Region page — /commentarii-mundi/ukraine/mykolaiv/
+
+    The deepest level of World → Conflict → Region → Event. Rendered by a
+    routes.yaml channel:
+
+      /commentarii-mundi/ukraine/mykolaiv/:
+        controller: channel
+        template: cm-region
+        data: tag.mykolaiv
+        filter: tag:commentariimundi+tag:ukraine
+
+    Channels do not own permalinks, so this level can be added for any region at any
+    time without moving a single post or colliding with the conflict channel above
+    it. This template exists to prove that — requirement 3 asks that the region level
+    not be made impossible, and this is the file that keeps it cheap.
+
+    The breadcrumb shows Historia Arcana → Commentarii Mundi → Region. To insert the
+    conflict level, copy this file per conflict (cm-region-ukraine.hbs) and pass
+    conflictName/conflictUrl to the breadcrumb partial — Ghost gives a channel no way
+    to know its parent route.
+--}}
+
+{{#tag}}
+    {{> "commentarii-mundi/hero"
+        heroTitle=name
+        heroSubtitle="Region"
+        heroText=description
+        mapScope=slug}}
+{{/tag}}
+
+<main class="cm-main gh-outer">
+    <div class="cm-main-inner gh-inner">
+
+        {{#tag}}
+            {{> "commentarii-mundi/breadcrumb" regionName=name}}
+        {{/tag}}
+
+        <div class="cm-layout">
+            <div class="cm-layout-primary">
+                {{#if posts}}
+                    <div class="cm-report-list gh-feed">
+                        {{#foreach posts}}
+                            {{> "commentarii-mundi/report-card" lazyLoad=true}}
+                        {{/foreach}}
+                    </div>
+                {{else}}
+                    <p class="cm-empty is-body">
+                        Für diese Region liegen noch keine Berichte vor.
+                    </p>
+                {{/if}}
+            </div>
+
+            {{> "commentarii-mundi/sidebar" showSituation=false}}
+        </div>
+
+    </div>
+</main>

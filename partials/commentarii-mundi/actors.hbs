@@ -1,0 +1,28 @@
+{{!--
+    "Akteure" — parties to a conflict.
+
+    Ghost has no entity model, so actors are Ghost tags too, passed explicitly by
+    the conflict page. Renders nothing when none are configured.
+
+    Parameters:
+    * actorSlugs — comma-separated Ghost tag slugs
+--}}
+{{#if actorSlugs}}
+    {{#get "tags" filter="slug:[{{actorSlugs}}]" limit="all" as |actors|}}
+        {{#if actors}}
+            <section class="cm-section">
+                <h2 class="cm-section-title is-title">Akteure</h2>
+                <ul class="cm-actor-list">
+                    {{#foreach actors}}
+                        <li class="cm-actor">
+                            <a href="{{url}}">
+                                <span class="cm-actor-name">{{name}}</span>
+                                {{#if description}}<span class="cm-actor-note">{{description}}</span>{{/if}}
+                            </a>
+                        </li>
+                    {{/foreach}}
+                </ul>
+            </section>
+        {{/if}}
+    {{/get}}
+{{/if}}

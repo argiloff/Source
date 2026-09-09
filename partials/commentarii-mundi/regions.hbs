@@ -1,0 +1,43 @@
+{{!--
+    "Wichtige Regionen" — the region level of the World → Conflict → Region → Event
+    hierarchy.
+
+    Regions are derived, not configured: they are the other Ghost tags appearing on
+    this conflict's reports (mykolaiv, donetsk, kharkiv on Ukraine reports). A global
+    theme setting could not express a per-conflict list, and per-conflict templates
+    would defeat the point of a reusable component, so the data comes from the tags
+    the editorial workflow already applies.
+
+    Server-rendered output contains duplicates and editorial vocabulary; deduping and
+    filtering happen in assets/js/commentarii-mundi.js, which also rewrites the hrefs
+    to /commentarii-mundi/{conflict}/{region}/ when nested URLs are enabled. Without
+    JavaScript the section hides itself rather than showing a messy list.
+
+    Parameters:
+    * conflictSlug — required
+    * limit        — how many recent reports to harvest tags from; pass a literal
+--}}
+{{#if conflictSlug}}
+    {{#get "posts" filter="tag:commentariimundi+tag:{{conflictSlug}}" include="tags" limit=limit as |reports|}}
+        {{#if reports}}
+            <section class="cm-section cm-regions"
+                     data-cm-regions
+                     data-cm-region-conflict="{{conflictSlug}}"
+                     hidden>
+                <h2 class="cm-section-title is-title">Wichtige Regionen</h2>
+                <ul class="cm-region-list" data-cm-region-list>
+                    {{#foreach reports}}
+                        {{#foreach tags}}
+                            <li class="cm-region" data-cm-region="{{slug}}">
+                                <a class="cm-region-link" href="{{url}}">
+                                    {{> "commentarii-mundi/icons/pin"}}
+                                    <span class="cm-region-name">{{name}}</span>
+                                </a>
+                            </li>
+                        {{/foreach}}
+                    {{/foreach}}
+                </ul>
+            </section>
+        {{/if}}
+    {{/get}}
+{{/if}}

@@ -1,0 +1,75 @@
+{{!< default}}
+{{!--
+    Individual conflict page — /commentarii-mundi/ukraine/
+
+    Rendered by a routes.yaml channel:
+
+      /commentarii-mundi/ukraine/:
+        controller: channel
+        template: cm-conflict
+        data: tag.ukraine
+        filter: tag:commentariimundi
+
+    A channel, not a collection, so Commentarii Mundi posts keep their existing
+    permalinks and Historia Arcana's URL structure is untouched.
+
+    The layout deliberately mirrors the landing page — same hero, same feed, same
+    sidebar — so a reader moving from the global overview into a single conflict
+    stays inside the same publication.
+
+    The feed carries Source's .gh-feed class so the theme's existing infinite-scroll
+    pagination works here with no extra JavaScript.
+--}}
+
+{{#tag}}
+    {{> "commentarii-mundi/hero"
+        heroTitle=name
+        heroSubtitle="Konfliktüberblick"
+        heroText=description
+        mapScope=slug}}
+{{/tag}}
+
+<main class="cm-main gh-outer">
+    <div class="cm-main-inner gh-inner">
+
+        {{#tag}}
+            {{> "commentarii-mundi/breadcrumb" conflictName=name}}
+            {{> "commentarii-mundi/filters" active=slug}}
+        {{/tag}}
+
+        <div class="cm-layout">
+            <div class="cm-layout-primary">
+
+                {{#tag}}
+                    <div class="cm-conflict-headline">
+                        <h2 class="cm-conflict-headline-title is-title">Aktuelle Lage</h2>
+                        {{> "commentarii-mundi/conflict-severity" conflictSlug=slug}}
+                    </div>
+                {{/tag}}
+
+                {{#if posts}}
+                    <div class="cm-report-list gh-feed">
+                        {{#foreach posts}}
+                            {{> "commentarii-mundi/report-card" lazyLoad=true hideConflict=true}}
+                        {{/foreach}}
+                    </div>
+                {{else}}
+                    <p class="cm-empty is-body">
+                        Für diesen Konflikt liegen noch keine Berichte vor.
+                    </p>
+                {{/if}}
+
+                {{#tag}}
+                    {{> "commentarii-mundi/timeline" conflictSlug=slug limit="8"}}
+                    {{> "commentarii-mundi/regions" conflictSlug=slug limit="24"}}
+                {{/tag}}
+
+            </div>
+
+            {{> "commentarii-mundi/sidebar" showSituation=false}}
+        </div>
+
+        {{> "commentarii-mundi/section-conflicts" title="Weitere Konflikte"}}
+
+    </div>
+</main>

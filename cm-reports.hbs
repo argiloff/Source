@@ -1,0 +1,49 @@
+{{!< default}}
+{{!--
+    All Commentarii Mundi reports — /commentarii-mundi/berichte/
+
+    Rendered by a routes.yaml channel:
+
+      /commentarii-mundi/berichte/:
+        controller: channel
+        template: cm-reports
+        filter: tag:commentariimundi
+
+    This is where "Weitere Berichte laden" on the landing page goes. It exists so the
+    full archive keeps the Commentarii Mundi layout instead of dropping the reader
+    into Source's generic tag archive. Without routes.yaml the landing page links to
+    /tag/commentariimundi/ instead, which still works — it just looks like the rest
+    of Historia Arcana.
+
+    Uses Source's .gh-feed for infinite scroll.
+--}}
+
+{{> "commentarii-mundi/hero"
+    heroTitle="Commentarii Mundi"
+    heroSubtitle="Alle Berichte"
+    heroText="Sämtliche Berichte und Analysen zu laufenden Konflikten."}}
+
+<main class="cm-main gh-outer">
+    <div class="cm-main-inner gh-inner">
+
+        {{> "commentarii-mundi/breadcrumb" current="Alle Berichte"}}
+        {{> "commentarii-mundi/filters" active="all"}}
+
+        <div class="cm-layout">
+            <div class="cm-layout-primary">
+                {{#if posts}}
+                    <div class="cm-report-list gh-feed">
+                        {{#foreach posts}}
+                            {{> "commentarii-mundi/report-card" lazyLoad=true}}
+                        {{/foreach}}
+                    </div>
+                {{else}}
+                    <p class="cm-empty is-body">Noch keine Berichte veröffentlicht.</p>
+                {{/if}}
+            </div>
+
+            {{> "commentarii-mundi/sidebar"}}
+        </div>
+
+    </div>
+</main>
