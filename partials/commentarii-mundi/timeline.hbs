@@ -9,7 +9,7 @@
     * limit        — number of entries; pass a literal, Ghost only interpolates
                      {{...}} inside the filter option, not the other get options
 --}}
-{{#get "posts" filter="tag:commentariimundi+tag:{{conflictSlug}}" limit=limit as |entries|}}
+{{#get "posts" filter="tag:hash-commentarii-mundi+tag:{{conflictSlug}}" limit=limit as |entries|}}
     {{#if entries}}
         <section class="cm-section">
             <h2 class="cm-section-title is-title">Chronologie</h2>

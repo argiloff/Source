@@ -12,7 +12,7 @@
     Always renders the severity word so assistive technology gets it. Wrap the call
     in .cm-dot-only to show just the coloured dot visually.
 --}}
-{{#get "posts" filter="tag:commentariimundi+tag:{{conflictSlug}}" limit="1" include="tags" as |latest|}}
+{{#get "posts" filter="tag:hash-commentarii-mundi+tag:{{conflictSlug}}" limit="1" include="tags" as |latest|}}
     {{#foreach latest}}
         {{#has tag="#schwerwiegend"}}
             {{> "commentarii-mundi/status" severity="critical"}}

@@ -18,7 +18,7 @@
     * limit        — how many recent reports to harvest tags from; pass a literal
 --}}
 {{#if conflictSlug}}
-    {{#get "posts" filter="tag:commentariimundi+tag:{{conflictSlug}}" include="tags" limit=limit as |reports|}}
+    {{#get "posts" filter="tag:hash-commentarii-mundi+tag:{{conflictSlug}}" include="tags" limit=limit as |reports|}}
         {{#if reports}}
             <section class="cm-section cm-regions"
                      data-cm-regions

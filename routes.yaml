@@ -32,7 +32,7 @@ routes:
   /commentarii-mundi/berichte/:
     controller: channel
     template: cm-reports
-    filter: tag:commentariimundi
+    filter: tag:hash-commentarii-mundi
 
   # --- Conflicts ----------------------------------------------------------
   # `data: tag.<slug>` gives the template its {{#tag}} context (name,
@@ -42,19 +42,19 @@ routes:
     controller: channel
     template: cm-conflict
     data: tag.ukraine
-    filter: tag:commentariimundi
+    filter: tag:hash-commentarii-mundi
 
   /commentarii-mundi/sudan/:
     controller: channel
     template: cm-conflict
     data: tag.sudan
-    filter: tag:commentariimundi
+    filter: tag:hash-commentarii-mundi
 
   /commentarii-mundi/myanmar/:
     controller: channel
     template: cm-conflict
     data: tag.myanmar
-    filter: tag:commentariimundi
+    filter: tag:hash-commentarii-mundi
 
   # --- Regions ------------------------------------------------------------
   # The deepest level. Commented out until the region tags exist; uncommenting
@@ -64,7 +64,7 @@ routes:
   #   controller: channel
   #   template: cm-region
   #   data: tag.mykolaiv
-  #   filter: tag:commentariimundi+tag:ukraine
+  #   filter: tag:hash-commentarii-mundi+tag:ukraine
 
 # Collections and taxonomies are declared exactly as Ghost's defaults so that
 # uploading this file changes nothing about the rest of Historia Arcana. Ghost

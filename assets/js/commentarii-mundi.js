@@ -121,9 +121,12 @@
        regions.hbs renders every tag from the conflict's recent reports, duplicates
        and all, because Handlebars cannot dedupe. Strip the editorial vocabulary and
        the conflict's own tag, keep first occurrences, and reveal the section only if
-       anything is left. */
+       anything is left.
+
+       Internal tags (#commentarii-mundi, the severity markers) are already excluded
+       by {{#foreach tags}}, which defaults to public visibility; the hash- guard
+       below is belt and braces. */
     var EDITORIAL_TAGS = [
-        'commentariimundi',
         'update',
         'analyse',
         'analysis',

@@ -6,7 +6,7 @@
     Ukraine report links to Ukraine reports and never to archaeology posts. Falls
     back to the wider Commentarii Mundi feed when the post has no conflict tag.
 
-    Only ever included from post.hbs behind a {{#has tag="commentariimundi"}} guard.
+    Only ever included from post.hbs behind a {{#has tag="#commentarii-mundi"}} guard.
 
     Must be called from inside a post context.
 --}}
@@ -27,7 +27,7 @@
         {{!-- No {{#primary_tag}} block: keeping every path on the post context means
               Ghost's filter interpolation never has to resolve a ../ parent path. --}}
         {{#if primary_tag}}
-            {{#get "posts" filter="tag:commentariimundi+tag:{{primary_tag.slug}}+id:-{{id}}" limit="4" as |related|}}
+            {{#get "posts" filter="tag:hash-commentarii-mundi+tag:{{primary_tag.slug}}+id:-{{id}}" limit="4" as |related|}}
                 {{#if related}}
                     <section class="cm-section">
                         <h2 class="cm-section-title is-title">Weitere Berichte: {{primary_tag.name}}</h2>

@@ -3,21 +3,13 @@
 
     Must be called from inside a post context.
 
-    Tag order tolerance: the conflict is normally the post's primary tag, but if
-    "commentariimundi" was placed first instead, the next tag is used. That way
-    both tag orderings from the editorial guidelines produce the right label.
+    Since the publication identifier is the INTERNAL tag #commentarii-mundi, and
+    Ghost's primary_tag is always the first PUBLIC tag, the conflict is the primary
+    tag by construction. No tag-order tolerance is needed: the internal tag can
+    never occupy the primary slot.
 --}}
 {{#primary_tag}}
-    {{^match slug "commentariimundi"}}
-        <span class="cm-report-conflict">
-            <span class="cm-status-dot" aria-hidden="true"></span>{{name}}
-        </span>
-    {{/match}}
+    <span class="cm-report-conflict">
+        <span class="cm-status-dot" aria-hidden="true"></span>{{name}}
+    </span>
 {{/primary_tag}}
-{{#match primary_tag.slug "commentariimundi"}}
-    {{#foreach tags from="2" limit="1"}}
-        <span class="cm-report-conflict">
-            <span class="cm-status-dot" aria-hidden="true"></span>{{name}}
-        </span>
-    {{/foreach}}
-{{/match}}

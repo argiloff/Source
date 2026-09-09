@@ -31,7 +31,7 @@
 
         <div class="cm-layout">
             <div class="cm-layout-primary">
-                {{#get "posts" filter="tag:commentariimundi" include="authors,tags" limit="8" as |reports|}}
+                {{#get "posts" filter="tag:hash-commentarii-mundi" include="authors,tags" limit="8" as |reports|}}
                     {{#if reports}}
                         <div class="cm-report-list">
                             {{#foreach reports}}
@@ -45,7 +45,7 @@
                         </div>
                     {{else}}
                         <p class="cm-empty is-body">
-                            Noch keine Berichte. Beiträge mit dem Tag <code>commentariimundi</code> erscheinen hier automatisch.
+                            Noch keine Berichte. Beiträge mit dem internen Tag <code>#commentarii-mundi</code> erscheinen hier automatisch.
                         </p>
                     {{/if}}
                 {{/get}}

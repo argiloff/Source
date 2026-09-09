@@ -131,7 +131,7 @@ A **channel** is a filtered view that owns no permalinks. So:
   controller: channel
   template: cm-conflict
   data: tag.ukraine
-  filter: tag:commentariimundi
+  filter: tag:hash-commentarii-mundi
 ```
 
 Ghost replaces its *entire* routing config with the uploaded file, so `routes.yaml`
@@ -140,7 +140,12 @@ break the rest of the site.
 
 **Without routes.yaml:** conflict links 404. To run in that mode, edit the single line
 in `partials/commentarii-mundi/conflict-url.hbs` to emit `{{url}}` instead, and
-conflicts fall back to Ghost's native `/tag/{slug}/` pages.
+conflicts fall back to Ghost's native `/tag/{slug}/` pages — those are *public*
+conflict tags, so they route fine.
+
+The full report archive has no such fallback: `#commentarii-mundi` is internal and
+Ghost does not route internal tags, so `/commentarii-mundi/berichte/` needs the
+channel.
 
 ---
 
@@ -151,19 +156,29 @@ visibility system does that (§5).
 
 | Tag | Role |
 |---|---|
-| `commentariimundi` | publication identifier; every CM report carries it |
+| `#commentarii-mundi` | publication identifier (**internal**, slug `hash-commentarii-mundi`); every CM report carries it |
 | `ukraine`, `sudan`, … | the conflict |
 | `mykolaiv`, `donetsk`, … | the region |
 | `update`, `analyse`, `hintergrund` | report type |
 | `#schwerwiegend`, `#ernst`, `#beobachtung` | internal severity marker |
 
-### Tag order
+### Why the publication tag is internal
 
-Put the **conflict tag first** so it becomes Ghost's `primary_tag`. That gives correct
-labels throughout the theme and in Source's own article header.
+`#commentarii-mundi` is an internal tag (slug `hash-commentarii-mundi`). Three
+consequences the theme relies on:
 
-If `commentariimundi` ends up first instead, `conflict-label.hbs` falls back to the
-second tag, so both orderings work. Only the ordering above is recommended.
+- **`primary_tag` is always the conflict.** Ghost's `primary_tag` is the first
+  *public* tag, so the internal tag can never occupy that slot. Tag order needs no
+  special handling and `conflict-label.hbs` has no fallback branch.
+- **`{{#foreach tags}}` never leaks it.** Foreach defaults to public visibility, so
+  the publication tag and the severity markers stay out of derived region lists.
+- **There is no public archive.** Ghost does not route internal tags, so
+  `/tag/hash-commentarii-mundi/` does not exist. `routes.yaml` is therefore
+  **required** for the full report list at `/commentarii-mundi/berichte/` — there is
+  no tag-archive fallback for it.
+
+In NQL filters use the slug (`tag:hash-commentarii-mundi`); with the `has` helper use
+the display form (`{{#has tag="#commentarii-mundi"}}`).
 
 ### Severity
 
@@ -283,7 +298,7 @@ pnpm test:ci
    the theme uses both on the conflict cards.
 2. Append its slug to `commentarii_conflicts` in Ghost Admin → Design.
 3. Add a channel block to `routes.yaml` and re-upload it.
-4. Publish a report tagged `ukraine`, `commentariimundi`, and a severity tag.
+4. Publish a report tagged `ukraine`, `#commentarii-mundi`, and a severity tag.
 
 The conflict now appears in the filter pills, the Konfliktübersichten grid, the Top
 Konflikte panel and the Aktuelle Lage bars, with its own page at

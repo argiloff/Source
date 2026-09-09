@@ -8,7 +8,7 @@
      only way to give Commentarii Mundi reports their own presentation without a
      per-post custom template selection in the editor. Ordinary Historia Arcana
      posts do not match the guard and render exactly as upstream Source. --}}
-{{#has tag="commentariimundi"}}
+{{#has tag="#commentarii-mundi"}}
     {{> "commentarii-mundi/article-header"}}
 {{/has}}
 
@@ -82,7 +82,7 @@
      which the root of this template does not provide. That is also why the filter
      now reads {{id}} rather than {{post.id}}. The "Read more" markup itself is
      unchanged from upstream Source. --}}
-{{#has tag="commentariimundi"}}
+{{#has tag="#commentarii-mundi"}}
     {{> "commentarii-mundi/article-footer"}}
 {{else}}
     {{#if @custom.show_related_articles}}

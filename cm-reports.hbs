@@ -7,13 +7,13 @@
       /commentarii-mundi/berichte/:
         controller: channel
         template: cm-reports
-        filter: tag:commentariimundi
+        filter: tag:hash-commentarii-mundi
 
-    This is where "Weitere Berichte laden" on the landing page goes. It exists so the
-    full archive keeps the Commentarii Mundi layout instead of dropping the reader
-    into Source's generic tag archive. Without routes.yaml the landing page links to
-    /tag/commentariimundi/ instead, which still works — it just looks like the rest
-    of Historia Arcana.
+    This is where "Weitere Berichte laden" on the landing page goes.
+
+    Required, not optional: #commentarii-mundi is an internal tag, and Ghost gives
+    internal tags no public archive page. There is no /tag/... fallback for the full
+    report list, so this channel is the only route to it.
 
     Uses Source's .gh-feed for infinite scroll.
 --}}
