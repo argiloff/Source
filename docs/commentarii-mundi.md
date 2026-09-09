@@ -50,7 +50,7 @@ partials/commentarii-mundi/
     panel-toc.hbs         "Inhaltsverzeichnis"
     panel-topics.hbs      "Mehr zum Thema"
     promo.hbs             CM cross-promotion (available, not wired in — see §7)
-    icons/*.hbs           nine icons Source does not ship
+    icons/*.hbs           eight icons Source does not ship
 
 assets/css/commentarii-mundi.css    all .cm-* styles
 assets/js/commentarii-mundi.js      progressive enhancement
@@ -322,12 +322,88 @@ pnpm test:ci
 
 ---
 
-## 10. Adding a conflict
+## 10. Building and installing
+
+### Build
+
+```bash
+pnpm install --frozen-lockfile
+pnpm test:ci     # gulp zip + gscan --fatal --verbose
+```
+
+The uploadable theme is written to:
+
+```
+dist/source.zip
+```
+
+`dist/` is gitignored — the zip is a build artefact, rebuild it rather than commit it.
+`pnpm zip` alone builds it without running gscan; `pnpm test:ci` does both and is the
+one to use before an upload.
+
+> **Environment note.** On this machine `pnpm` fails via corepack: the shim looks for
+> `bin/pnpm.cjs` but pnpm 12.3.4 ships `bin/pnpm.mjs`. Workaround until corepack is
+> updated:
+> ```bash
+> node ~/.cache/node/corepack/v1/pnpm/12.3.4/bin/pnpm.mjs install --frozen-lockfile
+> npx gulp zip && npx gscan --fatal --verbose .
+> ```
+
+### Install order
+
+**Theme first, routes last.** `routes.yaml` references templates (`cm-conflict`,
+`cm-reports`, `cm-region`) and tags (`data: tag.ukraine`). If either is missing when
+the routes are uploaded, Ghost silently falls back to `index.hbs` or renders the route
+with empty data — which looks like a theme bug and is not one.
+
+1. **Back up the current routes.** Ghost Admin → Settings → Labs → download the
+   existing `routes.yaml`.
+
+   Not optional: Ghost replaces the **entire** routing configuration on upload. The
+   file in this repository assumes Ghost's defaults. If Historia Arcana already routes
+   anything itself — a `/blog/` collection, for instance — uploading over it deletes
+   that and breaks those URLs. Merge your existing configuration into this file rather
+   than replacing it.
+2. **Upload and activate the theme:** `dist/source.zip` → Ghost Admin → Design →
+   Change theme → Upload.
+3. **Create the tags.** The internal `#commentarii-mundi`, plus the public conflict
+   tags. Give each conflict tag a **description** and a **feature image** — the theme
+   uses both on the conflict cards.
+4. **Create the landing page** with slug `commentarii-mundi`. Title → hero title,
+   excerpt → subtitle, content → introduction. Do not pick a template; Ghost resolves
+   `page-commentarii-mundi.hbs` from the slug.
+5. **Set `commentarii_conflicts`** in Ghost Admin → Design → Site-wide.
+6. **Adjust and upload `routes.yaml`.** The conflict slugs in it are examples and must
+   match your real tags.
+7. **Optional:** the `window.COMMENTARII` snippet from §2 in Code injection.
+
+`/commentarii-mundi/` is live after step 5 — the landing page needs no routing. The
+conflict and report levels appear after step 6.
+
+### What to check on first load
+
+gscan is a static checker: it validates Handlebars syntax and helper names but runs no
+queries. These only show up against real content:
+
+- **`order="count.posts desc"`** in `panel-top-conflicts.hbs` — the one query option
+  whose support varies. If Ghost rejects it, drop the `order` argument.
+- **`{{#has tag="#commentarii-mundi"}}`** — if a CM report renders as a normal Source
+  article, the guard in `post.hbs` is not matching.
+- **Severity dots** — if every conflict shows amber (Beobachtung) despite
+  `#schwerwiegend` being set, internal tags are not coming through
+  `{{#get … include="tags"}}`.
+- **The "Regionen" row** in Auf einen Blick — removed client-side when empty, so its
+  absence is expected on a report with only a conflict tag.
+
+---
+
+## 11. Adding a conflict
 
 1. Create the Ghost tag (`ukraine`). Give it a **description** and a **feature image** —
    the theme uses both on the conflict cards.
 2. Append its slug to `commentarii_conflicts` in Ghost Admin → Design.
-3. Add a channel block to `routes.yaml` and re-upload it.
+3. Add a **collection** block to `routes.yaml` (before the root `/` collection)
+   and re-upload it.
 4. Publish a report tagged `ukraine`, `#commentarii-mundi`, and a severity tag.
 
 The conflict now appears in the filter pills, the Konfliktübersichten grid, the Top
