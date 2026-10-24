@@ -7,7 +7,9 @@
     Severity lives on the conflict's most recent report as one of the internal tags
     #schwerwiegend / #ernst / #beobachtung. Internal tags are invisible to readers
     and settable through the Ghost Admin API, which makes them the right carrier for
-    machine-written OSINT state. Falls back to "watch" when none is set.
+    machine-written OSINT state. Renders nothing when none is set: the OSINT platform
+does not supply severity, and showing "Beobachtung" for an unassessed conflict would
+state something no editor decided.
 
     Always renders the severity word so assistive technology gets it. Wrap the call
     in .cm-dot-only to show just the coloured dot visually.
@@ -20,7 +22,9 @@
             {{#has tag="#ernst"}}
                 {{> "commentarii-mundi/status" severity="serious"}}
             {{else}}
-                {{> "commentarii-mundi/status" severity="watch"}}
+                {{#has tag="#beobachtung"}}
+                    {{> "commentarii-mundi/status" severity="watch"}}
+                {{/has}}
             {{/has}}
         {{/has}}
     {{/foreach}}

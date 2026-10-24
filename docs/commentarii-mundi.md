@@ -250,8 +250,8 @@ the display form (`{{#has tag="#commentarii-mundi"}}`).
 
 Severity is per-conflict and derived from the internal severity tag on that conflict's
 **most recent report**. Internal tags (`#`-prefixed) are invisible to readers and
-writable through the Admin API, which makes them the right carrier for machine-written
-state. A conflict with no severity tag on its latest report reads as `Beobachtung`.
+set by the editor in Ghost. A conflict with no severity tag on its latest report shows
+**no** status and is not counted in "Aktuelle Lage" — the theme never assumes one.
 
 This costs one query per conflict listed in the Top Konflikte panel.
 
