@@ -3,9 +3,9 @@
 
 Historia Arcana customisation — NOT part of upstream Ghost Source.
 
-Everything here is namespaced .cm-* and imported at the very end of screen.css,
-so it never overrides a Source selector and future upstream merges only ever
-touch that single @import line.
+Everything here is namespaced .cm-* and imported at the top of screen.css
+(postcss-easy-import rejects a later @import), so it never overrides a Source
+selector and future upstream merges only ever touch that single @import line.
 
 Source's own tokens (--color-*, --font-*, --container-width) are reused wherever
 they exist; the --cm-* tokens below only add what Commentarii Mundi needs and
@@ -53,6 +53,15 @@ Source has no equivalent for.
 
 /* 2. Primitives
 /* ---------------------------------------------------------- */
+
+/* Unconfigured slots (Über / Methodik / Karte links, OSINT stats, source counts,
+   TOC, regions, Aktuelle Lage) ship with the hidden attribute and are revealed by
+   assets/js/commentarii-mundi.js. The UA rule [hidden] { display: none } loses to
+   any author display value, so without this every .cm-* flex/grid slot would show
+   up empty or as a dead href="#" link. */
+[class*="cm-"][hidden] {
+    display: none !important;
+}
 
 .cm-status {
     display: inline-flex;
@@ -1118,6 +1127,10 @@ Source has no equivalent for.
     color: var(--cm-muted);
     text-decoration: underline;
     text-underline-offset: 2px;
+}
+
+.cm-fact-region + .cm-fact-region::before {
+    content: ", ";
 }
 
 .cm-toc-list {

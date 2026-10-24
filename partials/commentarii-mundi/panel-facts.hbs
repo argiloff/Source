@@ -41,14 +41,23 @@
         {{/has}}
 
         {{!-- Secondary public tags are the regions; the conflict itself is primary.
-              The {{tags}} helper (not foreach — foreach has no separator) filters to
-              public visibility, so the internal publication and severity tags cannot
-              appear here. The row is marked optional because tags.length counts
-              internal tags too and so cannot gate it; the JS drops it when empty. --}}
+              foreach defaults to public visibility, so the internal publication and
+              severity tags cannot appear here; the report-type vocabulary (same list
+              as report-type.hbs and EDITORIAL_TAGS in the JS) is skipped explicitly.
+              Separators come from CSS, since skipped tags leave gaps a separator=
+              argument would not see. The row is marked optional because tags.length
+              counts internal tags too and so cannot gate it; the JS drops it when
+              empty. --}}
         <div class="cm-fact" data-cm-fact-optional>
             {{> "commentarii-mundi/icons/pin"}}
             <dt class="cm-fact-label">Regionen</dt>
-            <dd class="cm-fact-value">{{tags from="2" separator=", "}}</dd>
+            <dd class="cm-fact-value">
+                {{~#foreach tags from="2"~}}
+                    {{~#match slug "update"}}{{else match slug "analyse"}}{{else match slug "analysis"}}{{else match slug "hintergrund"}}{{else match slug "background"}}{{else~}}
+                        <span class="cm-fact-region"><a href="{{url}}">{{name}}</a></span>
+                    {{~/match~}}
+                {{~/foreach~}}
+            </dd>
         </div>
 
         <div class="cm-fact">

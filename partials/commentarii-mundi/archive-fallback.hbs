@@ -1,0 +1,29 @@
+{{!--
+    What a Commentarii Mundi route renders while the publication is switched off.
+
+    The routes in routes.yaml outlive the switch: a conflict collection keeps owning
+    its URLs whether or not the page with slug "commentarii-mundi" is published. So
+    instead of the CM layout, those URLs get Source's own archive — the same markup
+    as tag.hbs — and read as an ordinary Historia Arcana tag page.
+
+    Must be called with the route's context (tag + posts).
+--}}
+<main class="gh-main gh-outer">
+
+    {{#tag}}
+        <section class="gh-archive{{#if feature_image}} has-image{{/if}}{{#if @custom.show_publication_info_sidebar}} has-sidebar{{/if}} gh-inner">
+            <div class="gh-archive-inner">
+                <header class="gh-archive-wrapper">
+                    <h1 class="gh-article-title is-title">{{name}}</h1>
+                    {{#if description}}
+                        <p class="gh-article-excerpt">{{description}}</p>
+                    {{/if}}
+                </header>
+                {{> "feature-image"}}
+            </div>
+        </section>
+    {{/tag}}
+
+    {{> "components/post-list" feed="archive" postFeedStyle=@custom.post_feed_style showTitle=false showSidebar=@custom.show_publication_info_sidebar}}
+
+</main>

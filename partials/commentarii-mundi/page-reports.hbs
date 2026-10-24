@@ -1,0 +1,34 @@
+{{!--
+    Body of cm-reports.hbs (the Commentarii Mundi layout). Lives in a partial because
+    cm-reports.hbs only renders it while the master switch is on, and Ghost's async
+    {{#get}} does not resolve inline partials. Called with the route context.
+--}}
+{{> "commentarii-mundi/hero"
+    heroTitle="Commentarii Mundi"
+    heroSubtitle="Alle Berichte"
+    heroText="Sämtliche Berichte und Analysen zu laufenden Konflikten."}}
+
+<main class="cm-main gh-outer">
+    <div class="cm-main-inner gh-inner">
+
+        {{> "commentarii-mundi/breadcrumb" current="Alle Berichte"}}
+        {{> "commentarii-mundi/filters" active="all"}}
+
+        <div class="cm-layout">
+            <div class="cm-layout-primary">
+                {{#if posts}}
+                    <div class="cm-report-list gh-feed">
+                        {{#foreach posts}}
+                            {{> "commentarii-mundi/report-card" lazyLoad=true}}
+                        {{/foreach}}
+                    </div>
+                {{else}}
+                    <p class="cm-empty is-body">Noch keine Berichte veröffentlicht.</p>
+                {{/if}}
+            </div>
+
+            {{> "commentarii-mundi/sidebar"}}
+        </div>
+
+    </div>
+</main>

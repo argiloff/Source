@@ -5,6 +5,10 @@ Historia Arcana customisation of the Ghost Source theme.
 Commentarii Mundi is a publication area *inside* Historia Arcana, not a separate
 site. This document describes what was added, why, and how to operate it.
 
+> **Master switch.** Commentarii Mundi is on exactly while a **published** Ghost
+> page with slug `commentarii-mundi` exists. Unpublish or delete that page and the
+> whole publication switches off — no theme upload, no routes change. See §2a.
+
 ---
 
 ## 1. What was added, and what was touched
@@ -21,6 +25,9 @@ cm-region.hbs                       region page    /commentarii-mundi/ukraine/my
 cm-reports.hbs                      full archive   /commentarii-mundi/berichte/
                                     single report  /commentarii-mundi/ukraine/{slug}/
                                     is post.hbs -> partials/commentarii-mundi/report.hbs
+
+The three cm-*.hbs templates are thin routers behind the master switch (§2a); their
+layouts live in partials/commentarii-mundi/page-{conflict,region,reports}.hbs.
 
 partials/commentarii-mundi/
     hero.hbs              masthead with identity + map
@@ -46,6 +53,11 @@ partials/commentarii-mundi/
     regions.hbs           Wichtige Regionen
     actors.hbs            Akteure (available, not wired in — see §7)
     report.hbs            the single-report layout (mockup 2)
+    page-conflict.hbs     body of cm-conflict.hbs
+    page-region.hbs       body of cm-region.hbs
+    page-reports.hbs      body of cm-reports.hbs
+    archive-fallback.hbs  what CM routes render while switched off (= tag.hbs)
+    source-article.hbs    upstream Source article, moved out of post.hbs
     panel-facts.hbs       "Auf einen Blick"
     panel-toc.hbs         "Inhaltsverzeichnis"
     panel-topics.hbs      "Mehr zum Thema"
@@ -66,8 +78,10 @@ globs `assets/js/*.js`.
 | File | Change | Why it could not be additive |
 |---|---|---|
 | `assets/css/screen.css` | 1 `@import` + comment, at the top | `postcss-easy-import` rejects `@import` after any other statement, so the bottom of the file was not an option. Load order is harmless: every rule in the imported file is `.cm-*` namespaced, and the only Source classes it touches (`.is-title`, `.is-body`, `.gh-form`) are reached through higher-specificity selectors. |
-| `post.hbs` | becomes a router: `{{#has tag="#commentarii-mundi"}}` → CM layout, `{{else}}` → the upstream article | Ghost cannot select a template by tag. The alternative — a `custom-*.hbs` template — must be picked per post in the editor, which does not fit an Admin-API-driven backend. The upstream branch is **wrapped, not re-indented**, so its lines stay byte-identical and future merges apply cleanly. Its related-posts filter reads `{{id}}` rather than `{{post.id}}` because it now sits inside `{{#post}}`. |
-| `package.json` | 1 entry in `config.custom` | See §2. |
+| `post.hbs` | becomes a router: tag `#commentarii-mundi` **and** master switch on → CM layout, otherwise → the upstream article | Ghost cannot select a template by tag. The alternative — a `custom-*.hbs` template — must be picked per post in the editor, which does not fit an Admin-API-driven backend. The upstream article is needed from two branches, so it moved verbatim to `partials/commentarii-mundi/source-article.hbs` (Ghost's async `{{#get}}` does not resolve `{{#*inline}}` partials — tested, they render empty). Its related-posts filter reads `{{id}}` rather than `{{post.id}}` because it is called with the post as context. |
+| `package.json` | 1 entry in `config.custom`; `name` is `historia-arcana` | See §2. Ghost refuses an upload named `source.zip` ("not allowed to override the default theme"), and the zip name comes from `name`. |
+| `partials/components/post-list.hbs`, `partials/components/featured.hbs`, `author.hbs` | `tag:-hash-commentarii-mundi` on every `{{#get "posts"}}`; `hideCommentarii=true` on author pages | Historia Arcana and Commentarii Mundi do not mix. Source's homepage, featured block and author archives query posts without a collection, so CM reports would leak in. Tag pages are left alone on purpose: CM region links point at `/tag/{region}/`. The "Read more" block in `source-article.hbs` carries the same filter. |
+| `gulpfile.js` | `encoding: false` in the `zipper` task | gulp 5 reads files as UTF-8 by default and corrupted every font and image in the zip (upstream bug). |
 
 Everything else in the repository is untouched upstream Source.
 
@@ -97,6 +111,7 @@ OSINT backend):
     methodologyUrl: '/commentarii-mundi/methodik/',
     mapPageUrl:     '/commentarii-mundi/karte/',
     mapEmbedUrl:    'https://osint.example.org/embed',
+    regionPages:    true,   // only once region channels are in routes.yaml
     stats: { sources: '1.348', interval: '24h' }
   };
 </script>
@@ -104,6 +119,35 @@ OSINT backend):
 
 Every one of these is a slot that stays hidden until a value exists. An unconfigured
 install shows nothing rather than a dead link or an invented number.
+
+---
+
+## 2a. The master switch
+
+Commentarii Mundi is active exactly while a **published** page with slug
+`commentarii-mundi` exists. Each entry point checks it with one cached query:
+
+```handlebars
+{{#get "pages" filter="slug:commentarii-mundi" fields="id" limit="1" as |cmHome|}}
+```
+
+| URL | Switch on | Switch off |
+|---|---|---|
+| `/commentarii-mundi/` | CM landing page | 404 (the page is the landing page) |
+| `/commentarii-mundi/ukraine/` etc. | CM conflict / region / archive layout | Source's ordinary tag archive (`archive-fallback.hbs`) |
+| report tagged `#commentarii-mundi` | CM report layout | upstream Source article |
+| everything else | unchanged | unchanged |
+
+Draft, scheduled and deleted all count as "off"; a members-only page counts as
+"on". The switch is read on every request, so it takes effect immediately.
+
+What the switch does **not** do: `routes.yaml` keeps owning the
+`/commentarii-mundi/…` URLs. Report permalinks therefore stay nested while switched
+off — they just render as normal articles. To move reports back to `/{slug}/`,
+upload routes without the conflict collections.
+
+If the slug ever changes, update the filter in `post.hbs`, `cm-conflict.hbs`,
+`cm-region.hbs` and `cm-reports.hbs`.
 
 ---
 
@@ -217,6 +261,11 @@ Regions are not configured anywhere. They are derived: `regions.hbs` collects th
 on a conflict's recent reports, and the JavaScript strips the conflict's own tag, the
 editorial vocabulary and duplicates. Tag a report `mykolaiv` and the region appears.
 
+Region links point at Ghost's `/tag/mykolaiv/` by default. Only with
+`window.COMMENTARII.regionPages = true` does the JavaScript rewrite them to
+`/commentarii-mundi/ukraine/mykolaiv/` — set it once the matching region channels
+are uncommented in `routes.yaml`, otherwise every region link would 404.
+
 ---
 
 ## 5. Free / members / premium
@@ -303,14 +352,19 @@ git fetch upstream
 git merge upstream/main
 ```
 
-Expect conflicts only in the three files listed in §1:
+Expect conflicts only in the files listed in §1:
 
 - `assets/css/screen.css` — keep the `@import` at the top
-- `post.hbs` — keep the guard and the `{{#post}}` wrapper; take upstream's markup inside
-- `package.json` — keep `commentarii_conflicts`; watch the 20-setting cap if upstream
-  adds settings of its own
+- `post.hbs` — keep our router. Upstream changes to the article markup do **not**
+  merge by themselves: re-apply them in `partials/commentarii-mundi/source-article.hbs`
+  (`git diff <old>..upstream/main -- post.hbs` shows what to carry over)
+- `package.json` — keep `commentarii_conflicts` and `"name": "historia-arcana"`; watch
+  the 20-setting cap if upstream adds settings of its own
+- `gulpfile.js` — keep `encoding: false` unless upstream fixed it themselves
+- `post-list.hbs`, `featured.hbs`, `author.hbs` — keep the `tag:-hash-commentarii-mundi`
+  filters and `hideCommentarii`; check any `{{#get "posts"}}` upstream adds
 
-Nothing under `partials/commentarii-mundi/`, `assets/css/commentarii-mundi.css`,
+Nothing else under `partials/commentarii-mundi/`, `assets/css/commentarii-mundi.css`,
 `assets/js/commentarii-mundi.js` or the `cm-*.hbs` templates can conflict with upstream.
 
 Then rebuild and revalidate:
@@ -334,7 +388,7 @@ pnpm test:ci     # gulp zip + gscan --fatal --verbose
 The uploadable theme is written to:
 
 ```
-dist/source.zip
+dist/historia-arcana.zip
 ```
 
 `dist/` is gitignored — the zip is a build artefact, rebuild it rather than commit it.
@@ -364,12 +418,13 @@ with empty data — which looks like a theme bug and is not one.
    anything itself — a `/blog/` collection, for instance — uploading over it deletes
    that and breaks those URLs. Merge your existing configuration into this file rather
    than replacing it.
-2. **Upload and activate the theme:** `dist/source.zip` → Ghost Admin → Design →
+2. **Upload and activate the theme:** `dist/historia-arcana.zip` → Ghost Admin → Design →
    Change theme → Upload.
 3. **Create the tags.** The internal `#commentarii-mundi`, plus the public conflict
    tags. Give each conflict tag a **description** and a **feature image** — the theme
    uses both on the conflict cards.
-4. **Create the landing page** with slug `commentarii-mundi`. Title → hero title,
+4. **Create the landing page** with slug `commentarii-mundi` — this is the master
+   switch (§2a); keep it as a draft until everything else is in place. Title → hero title,
    excerpt → subtitle, content → introduction. Do not pick a template; Ghost resolves
    `page-commentarii-mundi.hbs` from the slug.
 5. **Set `commentarii_conflicts`** in Ghost Admin → Design → Site-wide.
@@ -377,7 +432,7 @@ with empty data — which looks like a theme bug and is not one.
    match your real tags.
 7. **Optional:** the `window.COMMENTARII` snippet from §2 in Code injection.
 
-`/commentarii-mundi/` is live after step 5 — the landing page needs no routing. The
+`/commentarii-mundi/` is live once the page is published — the landing page needs no routing. The
 conflict and report levels appear after step 6.
 
 ### What to check on first load

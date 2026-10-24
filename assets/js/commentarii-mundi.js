@@ -30,6 +30,7 @@
            methodologyUrl: '/commentarii-mundi/methodik/',
            mapPageUrl:     '/commentarii-mundi/karte/',
            mapEmbedUrl:    'https://osint.example.org/embed',
+           regionPages:    true,   // only once region channels exist in routes.yaml
            stats: { sources: '1.348', interval: '24h' }
          };
 
@@ -167,8 +168,14 @@
     /* Nested region URLs, matching the /commentarii-mundi/{conflict}/{region}/
        channels in routes.yaml. Regions are the one level whose URL is assembled
        client-side, because the conflict slug and the region slug live in different
-       Handlebars block frames. */
+       Handlebars block frames.
+
+       Opt-in via regionPages: region channels are commented out in routes.yaml by
+       default, and rewriting to a route that does not exist would turn every region
+       link into a 404. Without it the links keep Ghost's /tag/{slug}/ URL. */
     function nestRegionUrls() {
+        if (CONFIG.regionPages !== true) return;
+
         document.querySelectorAll('[data-cm-regions]').forEach(function (section) {
             var conflict = section.getAttribute('data-cm-region-conflict');
             if (!conflict) return;

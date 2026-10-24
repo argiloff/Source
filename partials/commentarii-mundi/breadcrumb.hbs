@@ -19,6 +19,10 @@
         <li>
             {{#if conflictName}}
                 <a href="{{@site.url}}/commentarii-mundi/">Commentarii Mundi</a>
+            {{else if regionName}}
+                <a href="{{@site.url}}/commentarii-mundi/">Commentarii Mundi</a>
+            {{else if current}}
+                <a href="{{@site.url}}/commentarii-mundi/">Commentarii Mundi</a>
             {{else}}
                 <span aria-current="page">Commentarii Mundi</span>
             {{/if}}
