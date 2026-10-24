@@ -79,7 +79,7 @@ globs `assets/js/*.js`.
 |---|---|---|
 | `assets/css/screen.css` | 1 `@import` + comment, at the top | `postcss-easy-import` rejects `@import` after any other statement, so the bottom of the file was not an option. Load order is harmless: every rule in the imported file is `.cm-*` namespaced, and the only Source classes it touches (`.is-title`, `.is-body`, `.gh-form`) are reached through higher-specificity selectors. |
 | `post.hbs` | becomes a router: tag `#commentarii-mundi` **and** master switch on → CM layout, otherwise → the upstream article | Ghost cannot select a template by tag. The alternative — a `custom-*.hbs` template — must be picked per post in the editor, which does not fit an Admin-API-driven backend. The upstream article is needed from two branches, so it moved verbatim to `partials/commentarii-mundi/source-article.hbs` (Ghost's async `{{#get}}` does not resolve `{{#*inline}}` partials — tested, they render empty). Its related-posts filter reads `{{id}}` rather than `{{post.id}}` because it is called with the post as context. |
-| `package.json` | 1 entry in `config.custom`; `name` is `historia-arcana` | See §2. Ghost refuses an upload named `source.zip` ("not allowed to override the default theme"), and the zip name comes from `name`. |
+| `package.json` | 1 entry in `config.custom`; `name` is `commentarii-mundi-source` | See §2. Ghost refuses an upload named `source.zip` ("not allowed to override the default theme"), and the zip name comes from `name`. |
 | `partials/components/post-list.hbs`, `partials/components/featured.hbs`, `author.hbs` | `tag:-hash-commentarii-mundi` on every `{{#get "posts"}}`; `hideCommentarii=true` on author pages | Historia Arcana and Commentarii Mundi do not mix. Source's homepage, featured block and author archives query posts without a collection, so CM reports would leak in. Tag pages are left alone on purpose: CM region links point at `/tag/{region}/`. The "Read more" block in `source-article.hbs` carries the same filter. |
 | `gulpfile.js` | `encoding: false` in the `zipper` task | gulp 5 reads files as UTF-8 by default and corrupted every font and image in the zip (upstream bug). |
 
@@ -358,7 +358,7 @@ Expect conflicts only in the files listed in §1:
 - `post.hbs` — keep our router. Upstream changes to the article markup do **not**
   merge by themselves: re-apply them in `partials/commentarii-mundi/source-article.hbs`
   (`git diff <old>..upstream/main -- post.hbs` shows what to carry over)
-- `package.json` — keep `commentarii_conflicts` and `"name": "historia-arcana"`; watch
+- `package.json` — keep `commentarii_conflicts` and `"name": "commentarii-mundi-source"` (must never equal the live theme `historia-arcana` in ../historia-arcana-ghost, or an upload would overwrite it); watch
   the 20-setting cap if upstream adds settings of its own
 - `gulpfile.js` — keep `encoding: false` unless upstream fixed it themselves
 - `post-list.hbs`, `featured.hbs`, `author.hbs` — keep the `tag:-hash-commentarii-mundi`
@@ -388,7 +388,7 @@ pnpm test:ci     # gulp zip + gscan --fatal --verbose
 The uploadable theme is written to:
 
 ```
-dist/historia-arcana.zip
+dist/commentarii-mundi-source.zip
 ```
 
 `dist/` is gitignored — the zip is a build artefact, rebuild it rather than commit it.
@@ -418,7 +418,7 @@ with empty data — which looks like a theme bug and is not one.
    anything itself — a `/blog/` collection, for instance — uploading over it deletes
    that and breaks those URLs. Merge your existing configuration into this file rather
    than replacing it.
-2. **Upload and activate the theme:** `dist/historia-arcana.zip` → Ghost Admin → Design →
+2. **Upload and activate the theme:** `dist/commentarii-mundi-source.zip` → Ghost Admin → Design →
    Change theme → Upload.
 3. **Create the tags.** The internal `#commentarii-mundi`, plus the public conflict
    tags. Give each conflict tag a **description** and a **feature image** — the theme
