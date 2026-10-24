@@ -85,7 +85,11 @@ function zipper(done) {
             '!AGENTS.md',
             '!CLAUDE.md',
             '!gulpfile.js'
-        ]),
+        ], {
+            // gulp 5 reads files as UTF-8 by default, which corrupts binaries
+            // (fonts, images) inside the zip.
+            encoding: false
+        }),
         zip(filename),
         dest('dist/')
     ], handleError(done));
