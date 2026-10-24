@@ -104,7 +104,7 @@
             {{#get "posts" filter="tag:hash-commentarii-mundi+tag:{{primary_tag.slug}}+id:-{{id}}" limit="4" as |related|}}
                 {{#if related}}
                     <section class="cm-section">
-                        <h2 class="cm-section-title is-title">Weitere Berichte: {{primary_tag.name}}</h2>
+                        <h2 class="cm-section-title is-title">Weitere Berichte: {{../primary_tag.name}}</h2>
                         <div class="cm-report-list">
                             {{#foreach related}}
                                 {{> "commentarii-mundi/report-card" lazyLoad=true hideConflict=true}}

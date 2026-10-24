@@ -203,6 +203,7 @@ collections:
   /:                        # must stay last
     permalink: /{slug}/
     template: index
+    filter: tag:-hash-commentarii-mundi   # keeps CM out of the blog index and /rss/
 ```
 
 Ghost replaces its *entire* routing config with the uploaded file, so `routes.yaml`

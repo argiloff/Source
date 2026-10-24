@@ -12,7 +12,7 @@
     {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" include="count.posts" limit="20" as |conflicts|}}
         {{#if conflicts}}
             <section class="cm-section cm-section-conflicts">
-                <h2 class="cm-section-title is-title">{{#if title}}{{title}}{{else}}Konfliktübersichten{{/if}}</h2>
+                <h2 class="cm-section-title is-title">{{#if ../title}}{{../title}}{{else}}Konfliktübersichten{{/if}}</h2>
                 <div class="cm-conflict-grid">
                     {{#foreach conflicts}}
                         {{> "commentarii-mundi/conflict-card"}}

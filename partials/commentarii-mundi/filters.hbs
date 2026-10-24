@@ -7,6 +7,9 @@
     Parameters:
     * active — slug of the currently active conflict, or "all"
 
+    `active` is read as ../active: inside {{#get}} the context is the API response,
+    so a bare {{active}} resolves to nothing and every page looked like "all".
+
     The active pill is marked from data-cm-active by assets/js/commentarii-mundi.js.
     Resolving it in Handlebars would need a parent-scope lookup across two nested
     block frames, whose depth differs between {{#get}} and {{#foreach}}.
@@ -14,7 +17,7 @@
 {{#if @custom.commentarii_conflicts}}
     {{#get "tags" filter="slug:[{{@custom.commentarii_conflicts}}]" limit="20" as |conflicts|}}
         {{#if conflicts}}
-            <nav class="cm-filters" aria-label="Konflikte filtern" data-cm-filters data-cm-active="{{#if active}}{{active}}{{else}}all{{/if}}">
+            <nav class="cm-filters" aria-label="Konflikte filtern" data-cm-filters data-cm-active="{{#if ../active}}{{../active}}{{else}}all{{/if}}">
                 <a class="cm-filter" data-cm-filter="all" href="{{@site.url}}/commentarii-mundi/">Alle Updates</a>
                 {{#foreach conflicts}}
                     <a class="cm-filter" data-cm-filter="{{slug}}" href="{{> "commentarii-mundi/conflict-url"}}">{{name}}</a>

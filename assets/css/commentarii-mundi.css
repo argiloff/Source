@@ -233,7 +233,9 @@ Source has no equivalent for.
 /* 3. Hero
 /* ---------------------------------------------------------- */
 
-.cm-hero {
+/* .gh-outer (loaded after this file) sets padding shorthand, which would reset
+   padding-block on these wrappers; the doubled class outranks it. */
+.cm-hero.gh-outer {
     padding-block: clamp(36px, 5vw, 60px);
     color: var(--cm-invert);
     background: linear-gradient(160deg, #0c1c2e 0%, #14304c 60%, #102841 100%);
@@ -424,6 +426,9 @@ Source has no equivalent for.
 
 .cm-main {
     flex-grow: 1;
+}
+
+.cm-main.gh-outer {
     padding-block: 40px 72px;
 }
 
@@ -972,6 +977,9 @@ Source has no equivalent for.
 
 .cm-report-page {
     flex-grow: 1;
+}
+
+.cm-report-page.gh-outer {
     padding-block: 28px 72px;
 }
 
@@ -1379,7 +1387,7 @@ Source has no equivalent for.
 }
 
 @media (max-width: 640px) {
-    .cm-hero {
+    .cm-hero.gh-outer {
         padding-block: 32px 36px;
     }
 

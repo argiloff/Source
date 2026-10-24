@@ -13,6 +13,9 @@
     to /commentarii-mundi/{conflict}/{region}/ when nested URLs are enabled. Without
     JavaScript the section hides itself rather than showing a messy list.
 
+    conflictSlug is read as ../conflictSlug inside {{#get}}, whose block context is
+    the API response; only the filter string is resolved against the outer scope.
+
     Parameters:
     * conflictSlug — required
     * limit        — how many recent reports to harvest tags from; pass a literal
@@ -22,7 +25,7 @@
         {{#if reports}}
             <section class="cm-section cm-regions"
                      data-cm-regions
-                     data-cm-region-conflict="{{conflictSlug}}"
+                     data-cm-region-conflict="{{../conflictSlug}}"
                      hidden>
                 <h2 class="cm-section-title is-title">Wichtige Regionen</h2>
                 <ul class="cm-region-list" data-cm-region-list>

@@ -89,6 +89,9 @@ collections:
   /:
     permalink: /{slug}/
     template: index
+    # Keeps Commentarii Mundi out of Historia Arcana's index and /rss/. Without
+    # it the root collection's feed still lists every CM report.
+    filter: tag:-hash-commentarii-mundi
 
 # Ghost replaces its entire routing config with this file, so the taxonomies block
 # is required. Omitting it would drop /tag/ and /author/ across the whole site.
